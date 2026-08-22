@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;family=Jost:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; }
+  ::selection { background: #C01F2E; color: #F5EFE3; }
+  @keyframes rcFade { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @keyframes rcDrawer { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes rcRise { from { opacity: 0; transform: translateY(34px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes rcRiseSm { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes rcUp { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes rcFadeOnly { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes rcFrameIn { from { opacity: 0; transform: scale(1.05); } to { opacity: 1; transform: scale(1); } }
+  @keyframes rcImgIn { from { opacity: 0; transform: translateY(26px) scale(1.03); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  @keyframes rcDrift { from { transform: translateY(-24px) scale(1.02); } to { transform: translateY(64px) scale(1.07); } }
+  @keyframes rcPulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.65); opacity: .35; } }
+  @keyframes rcFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+  @keyframes rcProgress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes rcBob { 0%, 100% { transform: translateY(0); opacity: .85; } 50% { transform: translateY(9px); opacity: .3; } }
+  @keyframes rcSheen { from { background-position: -160% 0; } to { background-position: 260% 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; } }
+  input::placeholder { color: #B6A79E; }
+  input[type="date"]::-webkit-calendar-picker-indicator { filter: sepia(1) saturate(2) hue-rotate(330deg); opacity: .6; cursor: pointer; }
+  image-slot { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+  /* ░░░ MICRO-INTERAZIONI ░░░ */
+  [data-rc="bottle"] { animation: rcFloat 6.5s ease-in-out infinite; will-change: transform; }
+  [data-rc="wines"] > div:nth-child(2) [data-rc="bottle"] { animation-delay: -1.6s; }
+  [data-rc="wines"] > div:nth-child(3) [data-rc="bottle"] { animation-delay: -3.2s; }
+  [data-rc="wines"] > div:nth-child(4) [data-rc="bottle"] { animation-delay: -4.8s; }
+  [data-zoom="frame"] { overflow: hidden; }
+  [data-zoom="frame"] img, [data-zoom="frame"] image-slot { transition: transform 1.05s cubic-bezier(.2,.7,.25,1); will-change: transform; }
+  [data-zoom="frame"]:hover img, [data-zoom="frame"]:hover image-slot { transform: scale(1.07); }
+  [data-rc="more"] > span { display: inline-block; transition: transform .4s cubic-bezier(.2,.7,.25,1); }
+  [data-rc="more"]:hover > span { transform: translateX(6px); }
+  [data-rc="footer"] a { background-image: linear-gradient(#C2A04A, #C2A04A); background-repeat: no-repeat; background-position: 0 100%; background-size: 0% 1px; padding-bottom: 2px; transition: color .35s ease, background-size .4s cubic-bezier(.2,.7,.25,1); }
+  [data-rc="footer"] a:hover { background-size: 100% 1px; }
+  header a { cursor: pointer; }
+
+  [data-rc="backtotop"] {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 99;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 18px;
+    border-radius: 999px;
+    background: #2C0A10;
+    color: #F4ECDC;
+    text-decoration: none;
+    font-size: 11px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    font-weight: 500;
+    box-shadow: 0 22px 40px rgba(42,26,23,0.14);
+    transition: transform .2s ease, background .2s ease;
+  }
+  [data-rc="backtotop"]:hover { transform: translateY(-2px); background: #3c1119; }
+  [data-rc="booking"] { display: none !important; }
+  @media (max-width: 640px) { [data-rc="backtotop"] { right: 16px; bottom: 16px; padding: 10px 14px; font-size: 10px; } }
+
+  /* ░░░ RESPONSIVE ░░░ */
+  [data-rc="navtoggle"] { display: none; }
+  @media (max-width: 1024px) {
+    [data-rc="story"] { grid-template-columns: 1fr !important; gap: 46px !important; }
+    [data-rc="exp-head"] { grid-template-columns: 1fr !important; gap: 40px !important; }
+    [data-rc="wines"] { grid-template-columns: repeat(2, 1fr) !important; }
+    [data-rc="exp-cards"] { grid-template-columns: 1fr !important; }
+    [data-rc="booking"] { grid-template-columns: 1fr !important; gap: 38px !important; }
+    [data-rc="footer"] { grid-template-columns: 1fr 1fr !important; gap: 38px !important; }
+    [data-rc="story-img"] { height: 440px !important; }
+  }
+  @media (max-width: 900px) {
+    [data-rc="navtoggle"] { display: inline-flex; }
+    [data-rc="nav"] {
+      position: absolute; top: 100%; left: 0; right: 0;
+      flex-direction: column; align-items: stretch; gap: 0;
+      background: rgba(245,239,227,0.98); backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(42,26,23,0.14);
+      padding: 4px 22px 20px; display: none;
+      box-shadow: 0 26px 44px -30px rgba(42,10,16,0.55);
+    }
+    [data-rc="nav"][data-open="true"] { display: flex; animation: rcFade .28s ease both; }
+    [data-rc="nav"] a { padding: 16px 2px; border-bottom: 1px solid rgba(42,26,23,0.08); font-size: 14px; }
+    [data-rc="pillars"] { grid-template-columns: 1fr 1fr !important; gap: 36px 24px !important; }
+    [data-rc="brandsub"] { font-size: 8.5px !important; letter-spacing: .34em !important; }
+    [data-rc="brandname"] { font-size: 18px !important; }
+  }
+  @media (max-width: 640px) {
+    [data-pad="block"] { padding: 68px 22px !important; }
+    [data-pad="inner"] { padding-left: 22px !important; padding-right: 22px !important; }
+    [data-pad="bleed"] { padding: 74px 0 !important; }
+    [data-pad="hero"] { padding: 0 22px 46px !important; }
+    [data-pad="footbot"] { padding-left: 22px !important; padding-right: 22px !important; flex-direction: column; }
+    [data-rc="wines"] { grid-template-columns: 1fr !important; max-width: 380px; margin-left: auto; margin-right: auto; }
+    [data-rc="pillars"] { grid-template-columns: 1fr !important; gap: 44px !important; }
+    [data-rc="footer"] { grid-template-columns: 1fr !important; gap: 34px !important; }
+    [data-rc="bookform"] { grid-template-columns: 1fr !important; }
+    [data-rc="story-stats"] { gap: 26px !important; flex-wrap: wrap; }
+    [data-rc="story-img"] { height: 400px !important; }
+    [data-rc="vintgrid"] { grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+    [data-rc="hero"] { height: 78vh !important; min-height: 540px !important; }
+    [data-rc="hero-frame"] { inset: 14px !important; }
+  }
+  @media (max-width: 380px) {
+    [data-rc="vintgrid"] { grid-template-columns: 1fr !important; }
+  }
+</style>
+</helmet>
+
+<div style="font-family: 'Jost', sans-serif; background: #F5EFE3; color: #2A1A17; overflow-x: hidden; position: relative;">
+
+  <!-- ░░░ SCROLL PROGRESS ░░░ -->
+  <div style="position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 80; transform-origin: 0 50%; background: linear-gradient(90deg, #7E1726, #C01F2E 55%, #C2A04A); animation: rcProgress linear both; animation-timeline: scroll(root);"></div>
+
+  <!-- ░░░ TOP BAR ░░░ -->
+  <header style="position: sticky; top: 0; z-index: 60; background: rgba(245,239,227,0.86); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(42,26,23,0.10);">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 16px 40px; display: flex; align-items: center; justify-content: space-between; gap: 24px;">
+      <a href="#top" style="display: flex; align-items: center; gap: 13px; text-decoration: none; color: inherit;">
+        <img src="assets/emblem.png" alt="Ronchi di Cialla" style="width: 44px; height: 44px; object-fit: contain; display: block;">
+        <span style="display: flex; flex-direction: column; line-height: 1;">
+          <span data-rc="brandname" style="font-family: 'Cormorant Garamond', serif; font-size: 21px; font-weight: 600; letter-spacing: .04em; color: #2A1A17;">RONCHI DI CIALLA</span>
+          <span data-rc="brandsub" style="font-size: 9.5px; letter-spacing: .42em; text-transform: uppercase; color: #9A7A30; margin-top: 3px;">Colli Orientali del Friuli</span>
+        </span>
+      </a>
+      <nav data-rc="nav" data-open="{{ menuOpenStr }}" style="display: flex; align-items: center; gap: 28px;">
+        <a href="#azienda" onClick="{{ closeMenu }}" style="text-decoration: none; color: #4A3530; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; font-weight: 400; padding-bottom: 3px; background-image: linear-gradient(#C01F2E, #C01F2E); background-repeat: no-repeat; background-position: 0 100%; background-size: 0% 1.5px; transition: color .35s ease, background-size .4s cubic-bezier(.2,.7,.25,1);" style-hover="color: #C01F2E; background-size: 100% 1.5px;">{{ t.navAzienda }}</a>
+        <a href="#territorio" onClick="{{ closeMenu }}" style="text-decoration: none; color: #4A3530; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; font-weight: 400; padding-bottom: 3px; background-image: linear-gradient(#C01F2E, #C01F2E); background-repeat: no-repeat; background-position: 0 100%; background-size: 0% 1.5px; transition: color .35s ease, background-size .4s cubic-bezier(.2,.7,.25,1);" style-hover="color: #C01F2E; background-size: 100% 1.5px;">{{ t.navTerritorio }}</a>
+        <a href="#vini" onClick="{{ closeMenu }}" style="text-decoration: none; color: #4A3530; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; font-weight: 400; padding-bottom: 3px; background-image: linear-gradient(#C01F2E, #C01F2E); background-repeat: no-repeat; background-position: 0 100%; background-size: 0% 1.5px; transition: color .35s ease, background-size .4s cubic-bezier(.2,.7,.25,1);" style-hover="color: #C01F2E; background-size: 100% 1.5px;">{{ t.navVini }}</a>
+        <a href="#annate" onClick="{{ closeMenu }}" style="text-decoration: none; color: #4A3530; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; font-weight: 400; padding-bottom: 3px; background-image: linear-gradient(#C01F2E, #C01F2E); background-repeat: no-repeat; background-position: 0 100%; background-size: 0% 1.5px; transition: color .35s ease, background-size .4s cubic-bezier(.2,.7,.25,1);" style-hover="color: #C01F2E; background-size: 100% 1.5px;">{{ t.navAnnate }}</a>
+        <a href="#esperienze" onClick="{{ closeMenu }}" style="text-decoration: none; color: #4A3530; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; font-weight: 400; padding-bottom: 3px; background-image: linear-gradient(#C01F2E, #C01F2E); background-repeat: no-repeat; background-position: 0 100%; background-size: 0% 1.5px; transition: color .35s ease, background-size .4s cubic-bezier(.2,.7,.25,1);" style-hover="color: #C01F2E; background-size: 100% 1.5px;">{{ t.navEsperienze }}</a>
+        <a href="#contatti" onClick="{{ closeMenu }}" style="text-decoration: none; color: #4A3530; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; font-weight: 400; padding-bottom: 3px; background-image: linear-gradient(#C01F2E, #C01F2E); background-repeat: no-repeat; background-position: 0 100%; background-size: 0% 1.5px; transition: color .35s ease, background-size .4s cubic-bezier(.2,.7,.25,1);" style-hover="color: #C01F2E; background-size: 100% 1.5px;">{{ t.navContatti }}</a>
+      </nav>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="display: flex; align-items: center; gap: 4px;">
+          <sc-for list="{{ langs }}" as="l" hint-placeholder-count="4">
+            <button onClick="{{ l.select }}" style="border: none; cursor: pointer; font-family: 'Jost', sans-serif; font-size: 11px; font-weight: 500; letter-spacing: .14em; padding: 6px 9px; border-radius: 40px; background: {{ l.bg }}; color: {{ l.fg }}; transition: all .2s;">{{ l.label }}</button>
+          </sc-for>
+        </div>
+        <button data-rc="navtoggle" onClick="{{ toggleMenu }}" aria-label="Menu" style="align-items: center; justify-content: center; flex-direction: column; gap: 5px; width: 42px; height: 42px; border: 1px solid rgba(42,26,23,0.18); border-radius: 6px; background: transparent; cursor: pointer; padding: 0;">
+          <span style="display: block; width: 19px; height: 1.5px; background: #7E1726; transition: transform .3s ease, opacity .3s ease; transform: {{ burgerTop }};"></span>
+          <span style="display: block; width: 19px; height: 1.5px; background: #7E1726; transition: opacity .25s ease; opacity: {{ burgerMid }};"></span>
+          <span style="display: block; width: 19px; height: 1.5px; background: #7E1726; transition: transform .3s ease; transform: {{ burgerBot }};"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ░░░ HERO ░░░ -->
+  <section id="top" data-rc="hero" style="position: relative; height: 88vh; min-height: 620px; display: flex; align-items: flex-end; overflow: hidden; background: radial-gradient(125% 120% at 76% 18%, #5A111E 0%, #3A0B13 46%, #220609 100%);">
+    <div style="position: absolute; inset: 0; z-index: 0; opacity: 0.12; background-image: url('assets/emblem.png'); background-repeat: no-repeat; background-position: 87% 40%; background-size: min(56vh, 580px); animation: rcDrift linear both; animation-timeline: scroll(root); animation-range: 0 92vh;"></div>
+    <div data-rc="hero-frame" style="position: absolute; inset: 24px; z-index: 1; border: 1px solid rgba(194,160,74,0.42); pointer-events: none; animation: rcFrameIn 1.5s cubic-bezier(.2,.7,.25,1) .15s both;"></div>
+    <div style="position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(34,6,9,0.10) 0%, rgba(34,6,9,0) 46%, rgba(34,6,9,0.50) 100%); pointer-events: none;"></div>
+    <div data-pad="hero" style="position: relative; z-index: 2; max-width: 1280px; margin: 0 auto; padding: 0 40px 72px; width: 100%;">
+      <p style="font-size: 12px; letter-spacing: .42em; text-transform: uppercase; color: #E6D29A; margin: 0 0 18px; font-weight: 500; animation: rcUp .95s cubic-bezier(.2,.7,.25,1) .15s both;">{{ t.heroKicker }}</p>
+      <h1 style="font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(56px, 9vw, 132px); line-height: .92; letter-spacing: -0.02em; color: #F7F1E4; margin: 0; max-width: 14ch; text-shadow: 0 2px 30px rgba(42,10,16,0.4); animation: rcUp 1.05s cubic-bezier(.2,.7,.25,1) .32s both;">{{ t.heroTitle }}</h1>
+      <p style="font-size: 17px; line-height: 1.55; color: #EDE3D0; max-width: 46ch; margin: 26px 0 34px; font-weight: 300; animation: rcUp 1s cubic-bezier(.2,.7,.25,1) .62s both;">{{ t.heroSub }}</p>
+      <div style="display: flex; gap: 14px; flex-wrap: wrap; animation: rcUp 1s cubic-bezier(.2,.7,.25,1) .82s both;">
+        <a href="#vini" style="text-decoration: none; background: #C01F2E; color: #F7F1E4; padding: 15px 30px; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; font-weight: 500; border-radius: 2px; transition: transform .4s cubic-bezier(.2,.7,.25,1), box-shadow .4s ease, background .3s ease;" style-hover="background: #A8182A; transform: translateY(-3px); box-shadow: 0 16px 30px -12px rgba(192,31,46,0.7);">{{ t.heroCta1 }}</a>
+        <a href="prenota.html" style="text-decoration: none; background: rgba(247,241,228,0.10); color: #F7F1E4; padding: 15px 30px; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; font-weight: 500; border-radius: 2px; border: 1px solid rgba(230,210,154,0.5); transition: transform .4s cubic-bezier(.2,.7,.25,1), background .3s ease, border-color .3s ease;" style-hover="background: rgba(247,241,228,0.20); transform: translateY(-3px); border-color: #C2A04A;">{{ t.heroCta2 }}</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░░ STORY ░░░ -->
+  <section id="azienda" data-rc="story" data-pad="block" style="scroll-margin-top: 86px; max-width: 1280px; margin: 0 auto; padding: 110px 40px; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 72px; align-items: center;">
+    <div style="animation: rcRise 1.15s cubic-bezier(.2,.7,.25,1) both; animation-timeline: view(); animation-range: entry 0% cover 30%;">
+      <p style="font-size: 12px; letter-spacing: .36em; text-transform: uppercase; color: #9A7A30; margin: 0 0 18px; font-weight: 500;">{{ t.storyKicker }}</p>
+      <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: clamp(36px, 4.4vw, 58px); line-height: 1.04; letter-spacing: -0.01em; color: #2A1A17; margin: 0 0 28px;">{{ t.storyTitle }}</h2>
+      <p style="font-size: 16.5px; line-height: 1.78; color: #5A463F; margin: 0 0 20px; font-weight: 300; max-width: 56ch;">La famiglia così riunita in sinergia, rappresenta oggi un formidabile motore di tradizione e conoscenza scientifica che contraddistingue questa piccola ma esclusiva Azienda-Famiglia.</p>
+      <div style="display: flex; gap: 44px; margin-top: 40px; padding-top: 34px; border-top: 1px solid rgba(42,26,23,0.12);" data-rc="story-stats">
+        <div><div style="font-family: 'Cormorant Garamond', serif; font-size: 44px; font-weight: 600; color: #7E1726; line-height: 1;">1970</div><div style="font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: #9A7A30; margin-top: 6px;">La rinascita</div></div>
+        <div><div style="font-family: 'Cormorant Garamond', serif; font-size: 44px; font-weight: 600; color: #7E1726; line-height: 1;">7</div><div style="font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: #9A7A30; margin-top: 6px;">Vitigni autoctoni</div></div>
+        <div><div style="font-family: 'Cormorant Garamond', serif; font-size: 44px; font-weight: 600; color: #7E1726; line-height: 1;">3</div><div style="font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: #9A7A30; margin-top: 6px;">Generazioni</div></div>
+      </div>
+    </div>
+    <div style="position: relative; animation: rcImgIn 1.25s cubic-bezier(.2,.7,.25,1) both; animation-timeline: view(); animation-range: entry 0% cover 30%;">
+      <div data-rc="story-img" data-zoom="frame" style="position: relative; z-index: 1; height: 520px; overflow: hidden;">
+        <img data-zoom="img" src="uploads/ivanepierpaolorapuzzi.jpg" alt="Ivan e Pierpaolo Rapuzzi" style="width: 100%; height: 100%; object-fit: cover; object-position: 58% 8%; transform-origin: 58% 8%; display: block;">
+        <div style="position: absolute; left: 0; right: 0; bottom: 0; padding: 18px 20px; background: linear-gradient(0deg, rgba(36,6,9,0.74), transparent);">
+          <span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 18px; color: #F4ECDC;">Ivan e Pierpaolo Rapuzzi</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░░ TERRITORY ░░░ -->
+  <section id="territorio" data-pad="block" style="scroll-margin-top: 86px; max-width: 1280px; margin: 0 auto; padding: 110px 40px;">
+    <div style="max-width: 780px; margin: 0 auto 48px; animation: rcRise 1.15s cubic-bezier(.2,.7,.25,1) both; animation-timeline: view(); animation-range: entry 0% cover 30%;">
+      <p style="font-size: 12px; letter-spacing: .36em; text-transform: uppercase; color: #9A7A30; margin: 0 0 18px; font-weight: 500;">{{ t.territoryKicker }}</p>
+      <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: clamp(36px, 4.4vw, 58px); line-height: 1.02; color: #2A1A17; margin: 0 0 28px;">{{ t.territoryTitle }}</h2>
+      <p style="font-size: 16.5px; line-height: 1.78; color: #5A463F; margin: 0; font-weight: 300; max-width: 52ch;">{{ t.territorySub }}</p>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start;">
+<iframe width='100%' height='400px' src="https://api.mapbox.com/styles/v1/stroboflex/cmt1bzgnb002101s300hcdy5q.html?title=false&access_token=pk.eyJ1Ijoic3Ryb2JvZmxleCIsImEiOiJjbXQxYnR3aHUwZ240MnhyMnprNWh3eDdoIn0.NmG-ARycoIm0dKhYMWIAig&zoomwheel=false#15.12/46.078371/13.4798/347.2" title="Satellite" style="border:none; border-radius:14px;"></iframe>      <div style="padding: 20px; font-family: 'Cormorant Garamond', serif; color: #5A463F;">
+        <h3 style="font-weight: 600; font-size: 28px; color: #2A1A17; margin: 0 0 20px;">I nostri plot</h3>
+        <table style="width: 100%; border-collapse: collapse; font-size: 15px;">
+          <thead>
+            <tr>
+              <th style="text-align:left; padding: 12px 0 10px; font-weight: 600; border-bottom: 1px solid rgba(42,26,23,0.12);">Plot</th>
+              <th style="text-align:left; padding: 12px 0 10px; font-weight: 600; border-bottom: 1px solid rgba(42,26,23,0.12);">Varietà</th>
+              <th style="text-align:right; padding: 12px 0 10px; font-weight: 600; border-bottom: 1px solid rgba(42,26,23,0.12);">Dimensione</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding: 12px 0;">Picolit</td><td style="padding: 12px 0;">Picolit</td><td style="padding: 12px 0; text-align:right;">1,12 ha</td></tr>
+            <tr><td style="padding: 12px 0;">Generale</td><td style="padding: 12px 0;">Friulano</td><td style="padding: 12px 0; text-align:right;">0,34 ha</td></tr>
+            <tr><td style="padding: 12px 0;">Cosson</td><td style="padding: 12px 0;">Schioppettino</td><td style="padding: 12px 0; text-align:right;">0,71 ha</td></tr>
+            <tr><td style="padding: 12px 0;">Sotto cantina</td><td style="padding: 12px 0;">Schioppettino</td><td style="padding: 12px 0; text-align:right;">1,96 ha</td></tr>
+            <tr><td style="padding: 12px 0;">Giancarlo</td><td style="padding: 12px 0;">Ribolla Gialla</td><td style="padding: 12px 0; text-align:right;">0,61 ha</td></tr>
+            <tr><td style="padding: 12px 0;">Cialla Bianco</td><td style="padding: 12px 0;">Ribolla Gialla</td><td style="padding: 12px 0; text-align:right;">2,22 ha</td></tr>
+            <tr><td style="padding: 12px 0;">Chiesa</td><td style="padding: 12px 0;">Ribolla Gialla, Refosco</td><td style="padding: 12px 0; text-align:right;">1,65 ha</td></tr>
+            <tr><td style="padding: 12px 0;">Sotto casa</td><td style="padding: 12px 0;">Friulano, Schioppettino</td><td style="padding: 12px 0; text-align:right;">1,57 ha</td></tr>
+            <tr><td style="padding: 12px 0;">Sotto strada</td><td style="padding: 12px 0;">Schioppettino, Refosco</td><td style="padding: 12px 0; text-align:right;">2,39 ha</td></tr>
+            <tr><td style="padding: 12px 0;">Mario</td><td style="padding: 12px 0;">Ribolla Gialla</td><td style="padding: 12px 0; text-align:right;">1,77 ha</td></tr>
+            <tr><td style="padding: 12px 0;">Cabina</td><td style="padding: 12px 0;">Ribolla Gialla</td><td style="padding: 12px 0; text-align:right;">0,38 ha</td></tr>
+            <tr><td style="padding: 12px 0;">Squarzulis</td><td style="padding: 12px 0;">Schioppettino, Ribolla Gialla</td><td style="padding: 12px 0; text-align:right;">1,54 ha</td></tr>
+            <tr><td style="padding: 12px 0;">Vescovo</td><td style="padding: 12px 0;">Ribolla Gialla</td><td style="padding: 12px 0; text-align:right;">0,64 ha</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░░ PILLARS ░░░ -->
+  <section style="background: #2C0A10; color: #F0E6D6; padding: 104px 0;" data-pad="bleed">
+    <div data-pad="inner" style="max-width: 1280px; margin: 0 auto; padding: 0 40px;">
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 30px; margin-bottom: 54px; animation: rcRise 1.15s cubic-bezier(.2,.7,.25,1) both; animation-timeline: view(); animation-range: entry 2% cover 34%;">
+        <div>
+          <p style="font-size: 12px; letter-spacing: .36em; text-transform: uppercase; color: #C2A04A; margin: 0 0 16px; font-weight: 500;">{{ t.pillarsKicker }}</p>
+          <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(34px, 4.2vw, 56px); line-height: 1.02; color: #F4ECDC; margin: 0;">{{ t.pillarsTitle }}</h2>
+        </div>
+      </div>
+      <div data-rc="pillars" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px;">
+        <div style="display: flex; flex-direction: column; animation: rcRiseSm 1s cubic-bezier(.2,.7,.25,1) both; animation-timeline: view(); animation-range: entry 0% cover 22%;">
+          <div data-zoom="frame" style="position: relative; width: 100%; height: 300px; overflow: hidden; border-radius: 18px;"><img src="uploads/SCHIOPPETTINO-01.jpg" alt="Schioppettino" style="width:100%; height:100%; object-fit: contain; object-position: center; display:block;"></div>
+          <h3 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 28px; color: #F4ECDC; margin: 24px 0 10px;">{{ t.pillar2 }}</h3>
+          <p style="font-size: 15px; line-height: 1.7; color: #C9B79E; font-weight: 300; margin: 0 0 16px;">La stessa filosofia che adottiamo in vigna ci guida in vinificazione: pazienza, rispetto del frutto, lungo affinamento.</p>
+          <a href="#schioppettino-story" data-rc="more" style="text-decoration: none; color: #E6D29A; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; margin-top: auto; transition: color .3s ease;" style-hover="color: #fff;">{{ t.readMore }} <span>→</span></a>
+        </div>
+        <div style="display: flex; flex-direction: column; animation: rcRiseSm 1s cubic-bezier(.2,.7,.25,1) both; animation-timeline: view(); animation-range: entry 0% cover 22%;">
+          <div data-zoom="frame" style="position: relative; width: 100%; height: 300px; overflow: hidden; border-radius: 18px;"><img src="uploads/biodiversityfriend.png" alt="Biodiversity Friend" style="width:100%; height:100%; object-fit: contain; object-position: center; display:block;"></div>
+          <h3 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 28px; color: #F4ECDC; margin: 24px 0 10px;">{{ t.pillar3 }}</h3>
+          <p style="font-size: 15px; line-height: 1.7; color: #C9B79E; font-weight: 300; margin: 0 0 16px;">Roncs sono le colline coltivate a vigna; Cialla è una valle protetta dai boschi, dove la natura detta il ritmo.</p>
+          <a href="#biodiversity-story" data-rc="more" style="text-decoration: none; color: #E6D29A; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; margin-top: auto; transition: color .3s ease;" style-hover="color: #fff;">{{ t.readMore }} <span>→</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="schioppettino-story" data-pad="block" style="scroll-margin-top: 86px; background: #24090F; color: #FFFFFF; padding: 84px 40px;">
+    <div style="max-width: 880px; margin: 0 auto;">
+      <p style="font-size: 12px; letter-spacing: .36em; text-transform: uppercase; color: #E6D29A; margin: 0 0 12px; font-weight: 500;">Lo Schioppettino</p>
+      <h3 style="font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(32px, 3.8vw, 44px); line-height: 1.05; color: #FFFFFF; margin: 0 0 18px;">La storia in breve</h3>
+      <p style="font-size: 15px; line-height: 1.8; color: #F7EFE3; font-weight: 300; margin: 0 0 24px;">Il recupero dello Schioppettino di Cialla rappresenta uno dei principali contributi della famiglia Rapuzzi alla viticoltura friulana, attraverso un'attività di ricerca, selezione e conservazione iniziata negli anni Settanta.</p>
+    </div>
+  </section>
+
+  <section id="biodiversity-story" data-pad="block" style="scroll-margin-top: 86px; background: #1F0B0F; color: #FFFFFF; padding: 84px 40px;">
+    <div style="max-width: 880px; margin: 0 auto;">
+      <p style="font-size: 12px; letter-spacing: .36em; text-transform: uppercase; color: #E6D29A; margin: 0 0 12px; font-weight: 500;">Biodiversity Friend</p>
+      <h3 style="font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(32px, 3.8vw, 44px); line-height: 1.05; color: #FFFFFF; margin: 0 0 18px;">Perché è importante</h3>
+      <p style="font-size: 15px; line-height: 1.8; color: #F7EFE3; font-weight: 300; margin: 0 0 24px;">Ronchi di Cialla aderisce al protocollo Biodiversity Friend, che promuove la conservazione della biodiversità attraverso il monitoraggio di flora, fauna e qualità dell'agroecosistema. La tutela dell'equilibrio ecologico costituisce un elemento integrante della gestione dei vigneti.</p>
+    </div>
+  </section>
+
+  <!-- ░░░ WINES ░░░ -->
+  <section id="vini" data-pad="block" style="scroll-margin-top: 86px; max-width: 1280px; margin: 0 auto; padding: 110px 40px;">
+    <div style="text-align: center; margin-bottom: 58px; animation: rcRise 1.15s cubic-bezier(.2,.7,.25,1) both; animation-timeline: view(); animation-range: entry 2% cover 34%;">
+      <p style="font-size: 12px; letter-spacing: .36em; text-transform: uppercase; color: #9A7A30; margin: 0 0 16px; font-weight: 500;">{{ t.winesKicker }}</p>
+      <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: clamp(36px, 4.4vw, 58px); line-height: 1.02; color: #2A1A17; margin: 0;">{{ t.winesTitle }}</h2>
+    </div>
+    <div data-rc="wines" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+      <sc-for list="{{ wines }}" as="w" hint-placeholder-count="4">
+        <div style="display: flex; animation: rcRiseSm 1s cubic-bezier(.2,.7,.25,1) both; animation-timeline: view(); animation-range: entry 0% cover 22%;">
+        <div style="flex: 1; background: {{ w.cardBg }}; border: none; padding: 34px 26px 28px; display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform .45s cubic-bezier(.2,.7,.25,1), box-shadow .45s cubic-bezier(.2,.7,.25,1), border-color .45s ease;" style-hover="border-color: #C2A04A; box-shadow: 0 24px 46px -28px rgba(90,17,30,0.55); transform: translateY(-6px);">
+          <div data-rc="bottle" style="height: 300px; width: 100%; margin-bottom: 24px; background-image: {{ w.bg }}; background-repeat: no-repeat; background-position: center bottom; background-size: auto 300px; filter: drop-shadow(0 16px 22px rgba(36,6,9,0.30));"></div>
+          <span style="font-size: 10.5px; letter-spacing: .22em; text-transform: uppercase; color: {{ w.tone }}; font-weight: 600;">{{ w.type }}</span>
+          <h3 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 25px; line-height: 1.05; color: #2A1A17; margin: 12px 0 7px;">{{ w.name }}</h3>
+          <p style="font-size: 11.5px; color: #8A756C; font-weight: 500; letter-spacing: .12em; margin: 0 0 14px; text-transform: uppercase;">{{ w.grape }}</p>
+          <p style="font-size: 14px; line-height: 1.6; color: #5A463F; font-weight: 300; margin: 0;">{{ w.note }}</p>
+        </div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- ░░░ VINI D'ANNATA ░░░ -->
+  <section id="annate" data-pad="bleed" style="scroll-margin-top: 86px; background: #F0E7D6; padding: 104px 0; border-top: 1px solid rgba(42,26,23,0.08); border-bottom: 1px solid rgba(42,26,23,0.08);">
+    <div data-pad="inner" style="max-width: 1280px; margin: 0 auto; padding: 0 40px;">
+      <div style="max-width: 700px; margin-bottom: 44px; animation: rcRise 1.15s cubic-bezier(.2,.7,.25,1) both; animation-timeline: view(); animation-range: entry 2% cover 34%;">
+        <p style="font-size: 12px; letter-spacing: .36em; text-transform: uppercase; color: #9A7A30; margin: 0 0 16px; font-weight: 500;">{{ t.vintKicker }}</p>
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: clamp(36px, 4.6vw, 62px); line-height: 1.0; color: #2A1A17; margin: 0 0 18px;">{{ t.vintTitle }}</h2>
+        <p style="font-size: 16.5px; line-height: 1.7; color: #5A463F; font-weight: 300; margin: 0;">{{ t.vintSub }}</p>
+      </div>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 34px;">
+        <sc-for list="{{ decades }}" as="d" hint-placeholder-count="6">
+          <button onClick="{{ d.select }}" style="cursor: pointer; font-family: 'Jost', sans-serif; font-size: 13px; letter-spacing: .1em; font-weight: 500; padding: 11px 22px; border-radius: 40px; border: 1px solid {{ d.border }}; background: {{ d.bg }}; color: {{ d.fg }}; transition: all .3s cubic-bezier(.2,.7,.25,1);" style-hover="transform: translateY(-2px); border-color: #C01F2E;">{{ d.label }}</button>
+        </sc-for>
+      </div>
+      <div data-rc="vintgrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px;">
+        <sc-for list="{{ decadeVintages }}" as="v" hint-placeholder-count="10">
+          <div style="animation: rcFadeOnly 1s ease both; animation-timeline: view(); animation-range: entry 0% cover 24%;">
+          <button onClick="{{ v.open }}" style="cursor: pointer; text-align: left; background: #FBF8F1; border: 1px solid rgba(42,26,23,0.10); padding: 22px 20px 20px; display: flex; flex-direction: column; min-height: 168px; position: relative; transition: transform .4s cubic-bezier(.2,.7,.25,1), box-shadow .4s cubic-bezier(.2,.7,.25,1), border-color .4s ease; font-family: 'Jost', sans-serif;" style-hover="border-color: #C01F2E; transform: translateY(-3px); box-shadow: 0 14px 30px -18px rgba(90,17,30,0.5);">
+            <span style="position: absolute; top: 18px; right: 18px; width: 8px; height: 8px; border-radius: 50%; background: #C01F2E; animation: rcPulse 3.2s ease-in-out infinite;"></span>
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: 40px; font-weight: 600; color: #7E1726; line-height: 1;">{{ v.year }}</span>
+            <span style="font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase; color: #9A7A30; font-weight: 500; margin: 10px 0 8px;">{{ v.char }}</span>
+            <span style="font-size: 13px; line-height: 1.5; color: #5A463F; font-weight: 300;">{{ v.note }}</span>
+          </button>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- ░░░ ESPERIENZE ░░░ -->
+  <section id="esperienze" data-pad="block" style="scroll-margin-top: 86px; max-width: 1280px; margin: 0 auto; padding: 110px 40px;">
+    <div data-rc="exp-head" style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; margin-bottom: 56px;">
+      <div style="animation: rcRise 1.15s cubic-bezier(.2,.7,.25,1) both; animation-timeline: view(); animation-range: entry 0% cover 32%;">
+        <p style="font-size: 12px; letter-spacing: .36em; text-transform: uppercase; color: #9A7A30; margin: 0 0 16px; font-weight: 500;">{{ t.expKicker }}</p>
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: clamp(36px, 4.6vw, 60px); line-height: 1.0; color: #2A1A17; margin: 0 0 16px;">{{ t.expTitle }}</h2>
+        <p style="font-size: 16.5px; line-height: 1.7; color: #5A463F; font-weight: 300; margin: 0;">{{ t.expSub }}</p>
+      </div>
+      <div data-zoom="frame" style="position: relative; height: 420px; animation: rcImgIn 1.25s cubic-bezier(.2,.7,.25,1) both; animation-timeline: view(); animation-range: entry 0% cover 30%; display:flex; justify-content:center; align-items:center;">
+        <img src="uploads/zio in vigna migliorata.png" alt="Vieni a Cialla" style="height:100%; width:auto; display:block; object-fit:contain; object-position:center center;" />
+      </div>
+    </div>
+
+    <div data-rc="exp-cards" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-bottom: 56px;">
+      <sc-for list="{{ expList }}" as="e" hint-placeholder-count="3">
+        <div data-rc="exp-card" style="position: relative; background: #FCF9F2; border: 1px solid rgba(42,26,23,0.12); padding: 34px 30px; display: flex; flex-direction: column; transition: transform .45s cubic-bezier(.2,.7,.25,1), box-shadow .45s ease;" style-hover="transform: translateY(-5px); box-shadow: 0 26px 48px -30px rgba(90,17,30,0.55);">
+          <sc-if value="{{ e.active }}" hint-placeholder-val="{{ false }}">
+            <span style="position: absolute; inset: -1px; border: 2px solid #C01F2E; pointer-events: none;"></span>
+          </sc-if>
+          <span style="font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: #9A7A30; font-weight: 500;">{{ e.meta }}</span>
+          <h3 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 30px; line-height: 1.05; color: #2A1A17; margin: 14px 0 14px;">{{ e.name }}</h3>
+          <p style="font-size: 15px; line-height: 1.7; color: #5A463F; font-weight: 300; margin: 0 0 26px; flex: 1;">{{ e.desc }}</p>
+          <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 20px; padding-top: 18px; border-top: 1px solid rgba(42,26,23,0.10);">
+            <span style="font-family: 'Cormorant Garamond', serif; font-size: {{ e.priceFont }}; font-weight: 600; color: #7E1726; line-height: 1;">{{ e.price }}</span>
+            <span style="font-size: 12px; color: #9A7A30; letter-spacing: .08em;">{{ e.priceUnit }}</span>
+          </div>
+          <button onClick="{{ e.select }}" style="cursor: pointer; border: none; background: {{ e.btnBg }}; color: {{ e.btnFg }}; padding: 14px; font-family: 'Jost', sans-serif; font-size: 12.5px; letter-spacing: .16em; text-transform: uppercase; font-weight: 500; transition: transform .35s cubic-bezier(.2,.7,.25,1), box-shadow .35s ease, background .3s ease;" style-hover="transform: translateY(-2px); box-shadow: 0 12px 24px -12px rgba(90,17,30,0.6);">{{ e.btnLabel }}</button>
+        </div>
+      </sc-for>
+    </div>
+
+    <!-- BOOKING PANEL -->
+    <div id="prenota" data-rc="booking" style="scroll-margin-top: 86px; background: #2C0A10; color: #F0E6D6; padding: 52px clamp(28px, 5vw, 64px); display: grid; grid-template-columns: 0.85fr 1.15fr; gap: clamp(32px, 5vw, 72px); animation: rcRise 1.15s cubic-bezier(.2,.7,.25,1) both; animation-timeline: view(); animation-range: entry 0% cover 32%;">
+      <div>
+        <p style="font-size: 12px; letter-spacing: .3em; text-transform: uppercase; color: #C2A04A; margin: 0 0 14px; font-weight: 500;">{{ t.formKicker }}</p>
+        <h3 style="font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(30px, 3.4vw, 46px); line-height: 1.04; color: #F4ECDC; margin: 0 0 22px;">{{ selectedExp.name }}</h3>
+        <p style="font-size: 15px; line-height: 1.7; color: #C9B79E; font-weight: 300; margin: 0 0 26px;">{{ selectedExp.desc }}</p>
+        <div style="display: flex; align-items: baseline; gap: 12px;">
+          <span style="font-family: 'Cormorant Garamond', serif; font-size: {{ selectedExp.priceFont }}; font-weight: 600; color: #E6D29A; line-height: 1;">{{ selectedExp.price }}</span>
+          <span style="font-size: 13px; color: #C9B79E; letter-spacing: .08em;">{{ selectedExp.priceUnit }} · {{ selectedExp.meta }}</span>
+        </div>
+      </div>
+
+      <div>
+        <sc-if value="{{ booking.sent }}" hint-placeholder-val="{{ false }}">
+          <div style="background: rgba(230,210,154,0.08); border: 1px solid rgba(230,210,154,0.35); padding: 48px 40px; text-align: center; animation: rcFade .4s ease both;">
+            <div style="width: 56px; height: 56px; border-radius: 50%; border: 1.5px solid #C2A04A; display: grid; place-items: center; margin: 0 auto 22px; font-size: 26px; color: #E6D29A;">✓</div>
+            <h4 style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 32px; color: #F4ECDC; margin: 0 0 12px;">{{ t.confTitle }}</h4>
+            <p style="font-size: 15px; line-height: 1.7; color: #C9B79E; font-weight: 300; margin: 0 0 26px; max-width: 42ch; margin-inline: auto;">{{ confMessage }}</p>
+            <button onClick="{{ resetBooking }}" style="cursor: pointer; background: transparent; border: 1px solid rgba(230,210,154,0.5); color: #E6D29A; padding: 13px 26px; font-family: 'Jost', sans-serif; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; font-weight: 500;" style-hover="background: rgba(230,210,154,0.12);">{{ t.confAnother }}</button>
+          </div>
+        </sc-if>
+        <sc-if value="{{ formVisible }}" hint-placeholder-val="{{ true }}">
+          <div data-rc="bookform" style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
+            <div style="grid-column: 1 / -1;">
+              <label style="display: block; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #C2A04A; margin-bottom: 9px; font-weight: 500;">{{ t.formExp }}</label>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <sc-for list="{{ expChips }}" as="c" hint-placeholder-count="3">
+                  <button onClick="{{ c.select }}" style="cursor: pointer; font-family: 'Jost', sans-serif; font-size: 12.5px; font-weight: 400; padding: 10px 16px; border-radius: 3px; border: 1px solid {{ c.border }}; background: {{ c.bg }}; color: {{ c.fg }}; transition: all .3s cubic-bezier(.2,.7,.25,1);" style-hover="transform: translateY(-2px); border-color: #C2A04A;">{{ c.name }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <div>
+              <label style="display: block; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #C2A04A; margin-bottom: 9px; font-weight: 500;">{{ t.formDate }}</label>
+              <input type="date" value="{{ booking.date }}" onChange="{{ onDate }}" style="width: 100%; background: rgba(247,241,228,0.06); border: 1px solid rgba(230,210,154,0.28); color: #F0E6D6; padding: 13px 14px; font-family: 'Jost', sans-serif; font-size: 14px; border-radius: 3px; outline: none;" style-focus="border-color: #C2A04A;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #C2A04A; margin-bottom: 9px; font-weight: 500;">{{ t.formGuests }}</label>
+              <div style="display: flex; align-items: center; border: 1px solid rgba(230,210,154,0.28); border-radius: 3px; background: rgba(247,241,228,0.06);">
+                <button onClick="{{ decGuests }}" style="cursor: pointer; background: none; border: none; color: #E6D29A; font-size: 22px; width: 46px; height: 47px; line-height: 1;">−</button>
+                <span style="flex: 1; text-align: center; font-size: 15px; color: #F0E6D6;">{{ booking.guests }}</span>
+                <button onClick="{{ incGuests }}" style="cursor: pointer; background: none; border: none; color: #E6D29A; font-size: 20px; width: 46px; height: 47px; line-height: 1;">+</button>
+              </div>
+            </div>
+            <div>
+              <label style="display: block; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #C2A04A; margin-bottom: 9px; font-weight: 500;">{{ t.formName }}</label>
+              <input type="text" value="{{ booking.name }}" onChange="{{ onName }}" placeholder="Mario Rossi" style="width: 100%; background: rgba(247,241,228,0.06); border: 1px solid rgba(230,210,154,0.28); color: #F0E6D6; padding: 13px 14px; font-family: 'Jost', sans-serif; font-size: 14px; border-radius: 3px; outline: none;" style-focus="border-color: #C2A04A;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #C2A04A; margin-bottom: 9px; font-weight: 500;">{{ t.formEmail }}</label>
+              <input type="email" value="{{ booking.email }}" onChange="{{ onEmail }}" placeholder="mario@email.it" style="width: 100%; background: rgba(247,241,228,0.06); border: 1px solid rgba(230,210,154,0.28); color: #F0E6D6; padding: 13px 14px; font-family: 'Jost', sans-serif; font-size: 14px; border-radius: 3px; outline: none;" style-focus="border-color: #C2A04A;">
+            </div>
+            <div style="grid-column: 1 / -1;">
+              <label style="display: block; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #C2A04A; margin-bottom: 9px; font-weight: 500;">{{ t.formNote }}</label>
+              <input type="text" value="{{ booking.note }}" onChange="{{ onNote }}" placeholder="{{ t.formNotePh }}" style="width: 100%; background: rgba(247,241,228,0.06); border: 1px solid rgba(230,210,154,0.28); color: #F0E6D6; padding: 13px 14px; font-family: 'Jost', sans-serif; font-size: 14px; border-radius: 3px; outline: none;" style-focus="border-color: #C2A04A;">
+            </div>
+            <button onClick="{{ submitBooking }}" style="grid-column: 1 / -1; cursor: pointer; background: #C01F2E; border: none; color: #F7F1E4; padding: 16px; font-family: 'Jost', sans-serif; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; font-weight: 600; margin-top: 6px; border-radius: 3px;" style-hover="background: #A8182A;">{{ t.formSubmit }}</button>
+            <p style="grid-column: 1 / -1; font-size: 12px; color: #9C8369; margin: 2px 0 0; font-weight: 300;">{{ t.formDisclaimer }}</p>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+    <div style="margin-top: 56px; text-align: center;">
+      <img src="uploads/HP-firma.png" alt="Firma" style="max-width: 100%; height: auto; display: inline-block;" />
+    </div>
+  </section>
+
+  <!-- ░░░ FOOTER ░░░ -->
+  <footer id="contatti" style="scroll-margin-top: 86px; background: #1E0509; color: #C9B79E; padding: 80px 0 36px;">
+    <div data-rc="footer" data-pad="inner" style="max-width: 1280px; margin: 0 auto; padding: 0 40px; display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 48px; align-items: start;">
+      <div>
+        <div style="display: flex; align-items: center; gap: 13px; margin-bottom: 22px;">
+          <img src="assets/emblem.png" alt="Ronchi di Cialla" style="width: 40px; height: 40px; object-fit: contain; display: block;">
+          <span style="font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; letter-spacing: .04em; color: #F4ECDC;">RONCHI DI CIALLA</span>
+        </div>
+        <p style="font-size: 14.5px; line-height: 1.85; font-weight: 300; margin: 0; color: #B7A488;">Azienda Agricola Ronchi di Cialla<br>di Paolo e Dina Rapuzzi &amp; Figli<br>Via Cialla, 47 — 33040 Prepotto (UD), Italia<br>Tel. +39 0432 731679<br><a href="mailto:info@ronchidicialla.it" style="color: #E6D29A; text-decoration: none;">info@ronchidicialla.it</a></p>
+      </div>
+      <div>
+        <p style="font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: #C2A04A; margin: 0 0 18px; font-weight: 500;">{{ t.navVini }}</p>
+        <div style="display: flex; flex-direction: column; gap: 11px;">
+          <a href="#vini" style="text-decoration: none; color: #B7A488; font-size: 14px; font-weight: 300;" style-hover="color: #F4ECDC;">Schioppettino di Cialla</a>
+          <a href="#vini" style="text-decoration: none; color: #B7A488; font-size: 14px; font-weight: 300;" style-hover="color: #F4ECDC;">Refosco di Cialla</a>
+          <a href="#vini" style="text-decoration: none; color: #B7A488; font-size: 14px; font-weight: 300;" style-hover="color: #F4ECDC;">Ribolla Gialla</a>
+          <a href="#annate" style="text-decoration: none; color: #B7A488; font-size: 14px; font-weight: 300;" style-hover="color: #F4ECDC;">{{ t.vintKicker }}</a>
+        </div>
+      </div>
+      <div>
+        <p style="font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: #C2A04A; margin: 0 0 18px; font-weight: 500;">{{ t.footFollow }}</p>
+        <div style="display: flex; flex-direction: column; gap: 11px;">
+          <a href="#esperienze" style="text-decoration: none; color: #B7A488; font-size: 14px; font-weight: 300;" style-hover="color: #F4ECDC;">{{ t.navEsperienze }}</a>
+          <a href="#azienda" style="text-decoration: none; color: #B7A488; font-size: 14px; font-weight: 300;" style-hover="color: #F4ECDC;">{{ t.navAzienda }}</a>
+          <a href="#" style="text-decoration: none; color: #B7A488; font-size: 14px; font-weight: 300;" style-hover="color: #F4ECDC;">Facebook</a>
+        </div>
+      </div>
+    </div>
+    <div data-pad="footbot" style="max-width: 1280px; margin: 56px auto 0; padding: 24px 40px 0; border-top: 1px solid rgba(201,183,158,0.18); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 12px; color: #897460; letter-spacing: .04em;">
+      <span>© 2026 Ronchi di Cialla — {{ t.footRights }}</span>
+      <span>Colli Orientali del Friuli DOC · Cru Cialla</span>
+    </div>
+  </footer>
+
+  <!-- ░░░ VINTAGE DETAIL DRAWER ░░░ -->
+  <sc-if value="{{ selectedVintage }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeVintage }}" style="position: fixed; inset: 0; z-index: 90; background: rgba(30,5,9,0.55); backdrop-filter: blur(3px); animation: rcFade .25s ease both;"></div>
+    <aside style="position: fixed; top: 0; right: 0; bottom: 0; z-index: 91; width: min(460px, 92vw); background: #F5EFE3; box-shadow: -30px 0 60px -20px rgba(30,5,9,0.6); padding: 48px 44px; overflow-y: auto; animation: rcDrawer .34s cubic-bezier(.22,1,.36,1) both;">
+      <button onClick="{{ closeVintage }}" style="position: absolute; top: 26px; right: 30px; cursor: pointer; background: none; border: none; font-size: 26px; color: #9A7A30; line-height: 1;">×</button>
+      <p style="font-size: 11px; letter-spacing: .28em; text-transform: uppercase; color: #9A7A30; margin: 6px 0 6px; font-weight: 500;">{{ t.vintKicker }} · Schioppettino di Cialla</p>
+      <div style="font-family: 'Cormorant Garamond', serif; font-size: 96px; font-weight: 600; color: #7E1726; line-height: .9; margin: 4px 0 6px;">{{ selectedVintage.year }}</div>
+      <span style="display: inline-block; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: #fff; background: #C01F2E; padding: 6px 14px; border-radius: 40px; font-weight: 500; margin-bottom: 28px;">{{ selectedVintage.char }}</span>
+      <p style="font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: #9A7A30; margin: 0 0 8px; font-weight: 500;">{{ t.vintNotesLabel }}</p>
+      <p style="font-family: 'Cormorant Garamond', serif; font-size: 24px; font-style: italic; line-height: 1.4; color: #2A1A17; margin: 0 0 22px;">{{ selectedVintage.note }}</p>
+      <p style="font-size: 16px; line-height: 1.8; color: #5A463F; font-weight: 300; margin: 0 0 36px;">{{ selectedVintage.detail }}</p>
+      <a href="{{ vintageMailto }}" style="display: inline-block; text-decoration: none; background: #2C0A10; color: #E6D29A; padding: 15px 28px; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; font-weight: 500; border-radius: 3px;" style-hover="background: #3d0f17;">{{ t.vintReqBtn }}</a>
+    </aside>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    lang: 'it',
+    decade: '1970',
+    menuOpen: false,
+    selectedYear: null,
+    booking: { exp: 'classica', date: '', guests: 2, name: '', email: '', note: '', sent: false },
+  };
+
+  I18N = {
+    it: {
+      navAzienda: 'Azienda', navVini: 'Vini', navTerritorio: 'Territorio', navSchio: 'Schioppettino', navAnnate: 'Annate', navEsperienze: 'Esperienze', navContatti: 'Contatti',
+      heroKicker: 'Cialla · Colli Orientali del Friuli', heroTitle: 'Ronchi di Cialla',
+      heroSub: 'Produzione di vini solo da varietà autoctone nei Colli Orientali del Friuli dal 1970.',
+      heroCta1: 'Scopri i vini', heroCta2: 'Prenota un\u2019esperienza',
+      storyKicker: 'Dal 1970 · Famiglia Rapuzzi', storyTitle: 'Un\u2019azienda-famiglia tra i ronchi di Cialla',
+      pillarsKicker: 'Il nostro mondo', pillarsTitle: 'Tre radici, una sola filosofia', pillar1: 'Territorio', pillar2: 'Lo Schioppettino', pillar3: 'Biodiversity Friend', readMore: 'Approfondisci', territoryKicker: 'Il territorio', territoryTitle: 'La mappa dei nostri vigneti', territorySub: '',
+      winesKicker: 'I nostri vini', winesTitle: 'Vitigni autoctoni, vini di Cialla',
+      vintKicker: 'Vini d\u2019Annata', vintTitle: 'Mezzo secolo di vendemmie', vintSub: 'Dal 1977 a oggi: la verticale storica dello Schioppettino di Cialla, annata per annata. Seleziona un decennio e apri una scheda.',
+      vintNotesLabel: 'Note di vendemmia', vintReqBtn: 'Richiedi questa annata',
+      expKicker: 'Esperienze in cantina', expTitle: 'Vieni a Cialla', expSub: 'Tre modi per incontrare i nostri vini, nel cuore della valle.',
+      formKicker: 'Prenota la tua esperienza', formExp: 'Esperienza', formDate: 'Data', formGuests: 'Persone', formName: 'Nome e cognome', formEmail: 'Email', formNote: 'Note (facoltativo)', formNotePh: 'Allergie, occasione, richieste\u2026', formSubmit: 'Invia richiesta', formDisclaimer: 'Riceverai conferma di disponibilit\u00e0 via email. Nessun pagamento richiesto ora.',
+      confTitle: 'Richiesta inviata', confAnother: 'Invia un\u2019altra richiesta',
+      footFollow: 'Esplora', footRights: 'Tutti i diritti riservati',
+      onRequest: 'Su richiesta', perPerson: 'a persona',
+    },
+    en: {
+      navAzienda: 'Estate', navVini: 'Wines', navTerritorio: 'Territory', navSchio: 'Schioppettino', navAnnate: 'Vintages', navEsperienze: 'Experiences', navContatti: 'Contact',
+      heroKicker: 'Cialla · Colli Orientali del Friuli', heroTitle: 'Born on the vine',
+      heroSub: 'Since 1970 we have tended the native grapes of a small Friulian valley, crafting age-worthy wines of the highest quality.',
+      heroCta1: 'Discover the wines', heroCta2: 'Book an experience',
+      storyKicker: 'Since 1970 · The Rapuzzi Family', storyTitle: 'A family estate among the ronchi of Cialla',
+      pillarsKicker: 'Our world', pillarsTitle: 'Three roots, one philosophy', pillar1: 'Territory', pillar2: 'The Schioppettino', pillar3: 'Biodiversity Friend', readMore: 'Read more',
+      winesKicker: 'Our wines', winesTitle: 'Native grapes, wines of Cialla',
+      vintKicker: 'Library Vintages', vintTitle: 'Half a century of harvests', vintSub: 'From 1977 to today: the historic vertical of Schioppettino di Cialla, vintage by vintage. Pick a decade and open a card.',
+      vintNotesLabel: 'Harvest notes', vintReqBtn: 'Request this vintage',
+      expKicker: 'Cellar experiences', expTitle: 'Come to Cialla', expSub: 'Three ways to meet our wines, in the heart of the valley.',
+      formKicker: 'Book your experience', formExp: 'Experience', formDate: 'Date', formGuests: 'Guests', formName: 'Full name', formEmail: 'Email', formNote: 'Notes (optional)', formNotePh: 'Allergies, occasion, requests\u2026', formSubmit: 'Send request', formDisclaimer: 'You\u2019ll receive availability confirmation by email. No payment required now.',
+      confTitle: 'Request sent', confAnother: 'Send another request',
+      footFollow: 'Explore', footRights: 'All rights reserved',
+      onRequest: 'On request', perPerson: 'per person',
+    },
+    fr: {
+      navAzienda: 'Domaine', navVini: 'Vins', navTerritorio: 'Territoire', navSchio: 'Schioppettino', navAnnate: 'Millésimes', navEsperienze: 'Expériences', navContatti: 'Contact',
+      heroKicker: 'Cialla · Colli Orientali del Friuli', heroTitle: 'Nés sur la vigne',
+      heroSub: 'Depuis 1970, nous veillons sur les cépages autochtones d\u2019une petite vallée du Frioul, pour des vins de garde de très haute qualité.',
+      heroCta1: 'Découvrir les vins', heroCta2: 'Réserver une expérience',
+      storyKicker: 'Depuis 1970 · Famille Rapuzzi', storyTitle: 'Un domaine familial parmi les ronchi de Cialla',
+      pillarsKicker: 'Notre monde', pillarsTitle: 'Trois racines, une philosophie', pillar1: 'Territoire', pillar2: 'Le Schioppettino', pillar3: 'Biodiversity Friend', readMore: 'En savoir plus',
+      winesKicker: 'Nos vins', winesTitle: 'Cépages autochtones, vins de Cialla',
+      vintKicker: 'Millésimes d\u2019Annata', vintTitle: 'Un demi-siècle de vendanges', vintSub: 'De 1977 à aujourd\u2019hui : la verticale historique du Schioppettino di Cialla, millésime par millésime. Choisissez une décennie.',
+      vintNotesLabel: 'Notes de vendange', vintReqBtn: 'Demander ce millésime',
+      expKicker: 'Expériences au chai', expTitle: 'Venez à Cialla', expSub: 'Trois façons de rencontrer nos vins, au cœur de la vallée.',
+      formKicker: 'Réservez votre expérience', formExp: 'Expérience', formDate: 'Date', formGuests: 'Personnes', formName: 'Nom et prénom', formEmail: 'Email', formNote: 'Notes (facultatif)', formNotePh: 'Allergies, occasion, demandes\u2026', formSubmit: 'Envoyer la demande', formDisclaimer: 'Vous recevrez une confirmation de disponibilité par email. Aucun paiement requis maintenant.',
+      confTitle: 'Demande envoyée', confAnother: 'Envoyer une autre demande',
+      footFollow: 'Explorer', footRights: 'Tous droits réservés',
+      onRequest: 'Sur demande', perPerson: 'par personne',
+    },
+    de: {
+      navAzienda: 'Weingut', navVini: 'Weine', navTerritorio: 'Terroir', navSchio: 'Schioppettino', navAnnate: 'Jahrgänge', navEsperienze: 'Erlebnisse', navContatti: 'Kontakt',
+      heroKicker: 'Cialla · Colli Orientali del Friuli', heroTitle: 'Im Weinberg geboren',
+      heroSub: 'Seit 1970 pflegen wir die autochthonen Reben eines kleinen friaulischen Tals \u2013 für lagerfähige Weine von höchster Qualität.',
+      heroCta1: 'Weine entdecken', heroCta2: 'Erlebnis buchen',
+      storyKicker: 'Seit 1970 · Familie Rapuzzi', storyTitle: 'Ein Familienweingut in den ronchi von Cialla',
+      pillarsKicker: 'Unsere Welt', pillarsTitle: 'Drei Wurzeln, eine Philosophie', pillar1: 'Terroir', pillar2: 'Der Schioppettino', pillar3: 'Biodiversity Friend', readMore: 'Mehr erfahren',
+      winesKicker: 'Unsere Weine', winesTitle: 'Autochthone Reben, Weine aus Cialla',
+      vintKicker: 'Alte Jahrgänge', vintTitle: 'Ein halbes Jahrhundert Ernten', vintSub: 'Von 1977 bis heute: die historische Vertikale des Schioppettino di Cialla, Jahrgang für Jahrgang. Wählen Sie ein Jahrzehnt.',
+      vintNotesLabel: 'Erntenotizen', vintReqBtn: 'Diesen Jahrgang anfragen',
+      expKicker: 'Erlebnisse im Keller', expTitle: 'Kommen Sie nach Cialla', expSub: 'Drei Wege, unsere Weine zu erleben \u2013 im Herzen des Tals.',
+      formKicker: 'Erlebnis buchen', formExp: 'Erlebnis', formDate: 'Datum', formGuests: 'Personen', formName: 'Vor- und Nachname', formEmail: 'E-Mail', formNote: 'Anmerkungen (optional)', formNotePh: 'Allergien, Anlass, Wünsche\u2026', formSubmit: 'Anfrage senden', formDisclaimer: 'Sie erhalten eine Verfügbarkeitsbestätigung per E-Mail. Keine Zahlung erforderlich.',
+      confTitle: 'Anfrage gesendet', confAnother: 'Weitere Anfrage senden',
+      footFollow: 'Entdecken', footRights: 'Alle Rechte vorbehalten',
+      onRequest: 'Auf Anfrage', perPerson: 'pro Person',
+    },
+  };
+
+  WINES = [
+    { type: 'Rosso', tone: '#C01F2E', name: 'Schioppettino di Cialla', grape: 'Schioppettino in purezza', img: 'uploads/schioppettino di cialla no sfondo.jpg', imgId: 'wineRosso', note: 'Il rosso simbolo di Cialla: pepe nero, frutti rossi e carattere minerale.' },
+    { type: 'Rosso', tone: '#C01F2E', name: 'Refosco dal Peduncolo Rosso', grape: 'Refosco dal Peduncolo Rosso', img: 'assets/refosco.png', imgId: 'wineRefosco', note: 'Vino intenso, con frutto scuro, acidità nervosa e tannini dritti.' },
+    { type: 'Rosso', tone: '#C01F2E', name: 'Cialla Rosso', grape: 'Schioppettino · Refosco', img: 'assets/ciallarosso.png', imgId: 'wineRosso', note: 'Blend rosso classico di Cialla, speziato, succoso e di grande eleganza.' },
+    { type: 'Bianco', tone: '#9A7A30', name: 'Cialla Bianco', grape: 'Ribolla · Verduzzo · Picolit', img: 'assets/ciallabianco.png', imgId: 'wineBianco', note: 'L’uvaggio storico dei bianchi di Cialla: agrumi, fiori ed erbe, sapidità e lunga vita.' },
+    { type: 'Bianco', tone: '#9A7A30', name: 'Ribolla Gialla', grape: 'Ribolla Gialla', cardBg: 'transparent', img: 'uploads/ribolla no sfondo.jpg', imgId: 'wineBianco', note: 'Fresco e lineare, con note di mela verde, fiori bianchi e un finale salino.' },
+    { type: 'Bianco', tone: '#9A7A30', name: 'Friulano', grape: 'Friulano', img: 'uploads/friulano no sfondo.jpg', imgId: 'wineBianco', note: 'Rotondo e sapido, con mandorla amara, erbe aromatiche e morbidezza.' },
+    { type: 'Bianco', tone: '#9A7A30', name: 'Verduzzo', grape: 'Verduzzo', img: 'uploads/verduzzo no sfondo.jpg', imgId: 'wineBianco', note: 'Corposo e profumato, con miele, fiori secchi e un finale dolce-amaro.' },
+    { type: 'Bianco', tone: '#9A7A30', name: 'Picolit', grape: 'Picolit', img: 'uploads/picolit no sfondo.jpg', imgId: 'wineBianco', note: 'Nobile e raro: frutto giallo, spezie dolci e una lunga suadenza.' },
+    { type: 'Speciale', tone: '#9A7A30', name: 'Sol', grape: 'Blend di Cialla', img: 'uploads/sol no sfondo.jpg', imgId: 'wineBianco', note: 'Un sigillo del terroir: luminosità, calore e una trama di erbe e minerali.' },
+  ];
+
+  // Note di vendemmia segnaposto (da rivedere con i dati reali dell'azienda)
+  VINTAGE_RAW = [
+    [1977,'Fondativa','La prima vendemmia della rinascita dello Schioppettino a Cialla.','Annata storica: qui nasce il moderno Schioppettino di Cialla. Oggi testimone vivo, di rara profondità, del recupero del vitigno.'],
+    [1978,'Austera','Stagione fresca: tannino fitto e lunghissima tenuta.','Andamento tardivo e fresco. Frutto croccante, impronta speziata e struttura austera: tra le annate più longeve dei primi anni.'],
+    [1979,'Slanciata','Finezza e pepe nero su piccoli frutti scuri.','Maturazione regolare. Profilo slanciato e speziato, tannino setoso: prende forma l\u2019eleganza che diventerà la cifra di Cialla.'],
+    [1980,'Nervosa','Acidità viva e grande capacità di evoluzione.','Annata fresca e nervosa. Beva tesa, frutto sottile e lunga progressione nel bicchiere.'],
+    [1981,'Solare','Frutto pieno e tannino caldo, di bella generosità.','Estate calda e asciutta. Vino solare, polposo, dal tannino morbido e dalla chiusura speziata.'],
+    [1982,'Equilibrata','Equilibrio classico tra frutto, spezia e acidità.','Stagione regolare. Annata di riferimento per armonia: frutto scuro, pepe e finale lungo e composto.'],
+    [1983,'Calda','Maturità piena, corpo avvolgente e spezia dolce.','Annata calda. Schioppettino opulento, dal tannino rotondo e dal frutto maturo, ancora vivo nel tempo.'],
+    [1984,'Fresca','Profilo nervoso e verticale, annata fresca.','Stagione fredda e piovosa. Vino esile ma slanciato, di bella acidità e impronta pepata.'],
+    [1985,'Longeva','Grande annata: struttura e finezza per lunga guardia.','Inverno rigido, estate ideale. Tra le vendemmie storiche: profondità, tannino nobile e potenziale d\u2019invecchiamento eccezionale.'],
+    [1986,'Speziata','Pepe nero e frutto scuro, tannino preciso.','Andamento equilibrato. Profilo classico di Cialla: speziatura netta, frutto croccante e finale asciutto.'],
+    [1987,'Sottile','Beva slanciata e fragrante, annata più esile.','Stagione fresca. Vino di trama sottile, fragrante, da apprezzare per finezza più che per potenza.'],
+    [1988,'Strutturata','Corpo, frutto e spezia in bell\u2019equilibrio.','Ottima maturazione. Annata di razza, ricca e bilanciata, dal tannino fitto e dal lungo sviluppo.'],
+    [1989,'Materica','Tannino terroso e frutto scuro, di carattere.','Stagione altalenante. Vino materico e austero, dalla speziatura intensa e dalla chiusura sapida.'],
+    [1990,'Magistrale','Una vendemmia del decennio: potenza ed eleganza.','Annata solare e completa. Frutto profondo, tannino nobile e straordinaria capacità d\u2019invecchiamento.'],
+    [1991,'Esile','Annata fresca e contenuta, di beva agile.','Stagione difficile. Vino snello, dal frutto nitido e dall\u2019acidità viva, di pronta godibilità.'],
+    [1992,'Sapida','Frutto scuro e finale salino, di bella tensione.','Andamento piovoso. Profilo sapido e teso, speziato, con tannino vibrante.'],
+    [1993,'Generosa','Maturità calda, polpa e spezia dolce.','Estate calda. Schioppettino generoso e avvolgente, dal tannino morbido e dal frutto maturo.'],
+    [1994,'Verticale','Acidità slanciata e impronta pepata netta.','Annata fresca. Vino verticale e nervoso, di trama fine e lunga scia speziata.'],
+    [1995,'Classica','Equilibrio esemplare tra frutto, spezia e tannino.','Stagione regolare. Annata di riferimento, armonica e precisa, dal finale lungo e composto.'],
+    [1996,'Fresca','Annata fresca e croccante, di bella acidità.','Andamento fresco. Frutto rosso nitido, speziatura viva e beva slanciata.'],
+    [1997,'Solare','Grande annata calda: ricchezza e profondità.','Vendemmia eccellente. Vino opulento e profondo, dal tannino nobile e dall\u2019enorme potenziale di guardia.'],
+    [1998,'Equilibrata','Frutto pieno e spezia, di bell\u2019armonia.','Stagione calda e regolare. Annata completa, dal tannino rotondo e dal finale persistente.'],
+    [1999,'Elegante','Finezza e setosità, tannino di seta.','Ottima maturazione. Profilo elegante e raffinato, dal frutto scuro e dalla trama vellutata.'],
+    [2000,'Calda','Maturità solare, corpo pieno e spezia dolce.','Annata calda. Schioppettino generoso e morbido, dal frutto maturo e dalla chiusura speziata.'],
+    [2001,'Magistrale','Vendemmia di grande classe: profondità e tenuta.','Stagione ideale. Tra le migliori del decennio: frutto profondo, tannino nobile e lunghissima guardia.'],
+    [2002,'Fresca','Annata fresca e nervosa, di beva agile.','Stagione piovosa. Vino slanciato e teso, dal frutto nitido e dall\u2019acidità viva.'],
+    [2003,'Torrida','Annata calda e potente, frutto in confettura.','Estate torrida. Schioppettino caldo e opulento, dal tannino morbido e dal frutto surmaturo, di grande impatto.'],
+    [2004,'Equilibrata','Ritorno all\u2019equilibrio: frutto, spezia e finezza.','Stagione regolare e fresca. Annata armonica, dal tannino preciso e dal finale lungo.'],
+    [2005,'Sottile','Profilo esile e speziato, annata fresca.','Andamento piovoso. Vino di trama sottile, fragrante e pepato, da bere per finezza.'],
+    [2006,'Strutturata','Grande annata: corpo, frutto e tannino nobile.','Vendemmia eccellente. Vino ricco e profondo, dalla struttura importante e dal lungo potenziale d\u2019invecchiamento.'],
+    [2007,'Solare','Maturità precoce, frutto pieno e spezia dolce.','Annata calda e anticipata. Schioppettino generoso e avvolgente, dal tannino rotondo.'],
+    [2008,'Classica','Equilibrio tra frutto scuro, pepe e acidità.','Stagione regolare. Annata di riferimento, precisa e composta, dal finale persistente.'],
+    [2009,'Calda','Frutto maturo e corpo avvolgente, di generosità.','Estate calda. Vino polposo e morbido, dalla speziatura dolce e dal tannino rotondo.'],
+    [2010,'Verticale','Annata fresca e tesa, di lunga progressione.','Stagione fredda e tardiva. Vino verticale e slanciato, dall\u2019acidità viva e dalla speziatura netta.'],
+    [2011,'Solare','Maturità piena e frutto generoso, spezia calda.','Annata calda. Schioppettino opulento e avvolgente, dal tannino morbido e dal frutto maturo.'],
+    [2012,'Strutturata','Corpo e frutto in equilibrio, tannino fitto.','Stagione calda e asciutta. Annata ricca e bilanciata, di buona struttura e lunga tenuta.'],
+    [2013,'Elegante','Finezza e tensione, tannino setoso.','Annata fresca e regolare. Profilo elegante e slanciato, dal frutto nitido e dalla trama fine.'],
+    [2014,'Fresca','Annata fresca e nervosa, di beva fragrante.','Stagione piovosa. Vino esile e teso, dal frutto rosso croccante e dalla speziatura viva.'],
+    [2015,'Magistrale','Grande annata: profondità, frutto e tannino nobile.','Vendemmia eccellente. Vino completo e profondo, di straordinario equilibrio e lunghissimo potenziale.'],
+    [2016,'Classica','Equilibrio esemplare tra frutto, spezia e finezza.','Stagione ideale. Annata di riferimento, armonica e raffinata, dal finale lungo e composto.'],
+    [2017,'Solare','Maturità calda e anticipata, frutto pieno.','Annata calda e siccitosa. Schioppettino generoso e morbido, dal tannino rotondo e dalla spezia dolce.'],
+    [2018,'Equilibrata','Frutto scuro e spezia, di bell\u2019armonia.','Stagione regolare. Annata completa e precisa, dal tannino fitto e dal finale persistente.'],
+    [2019,'Elegante','Finezza, tensione e tannino di seta.','Annata fresca e luminosa. Profilo elegante e slanciato, dal frutto nitido e dalla trama vellutata.'],
+    [2020,'Slanciata','Annata fresca e fragrante, di beva agile.','Stagione regolare e fresca. Vino slanciato e speziato, dal frutto rosso croccante e dall\u2019acidità viva.'],
+    [2021,'Strutturata','Corpo, frutto e tannino nobile in equilibrio.','Annata calda e luminosa. Schioppettino ricco e profondo, di bella struttura e lungo potenziale d\u2019invecchiamento.'],
+    [2022,'Solare','Maturità piena e frutto generoso, ancora giovane.','Annata calda. Vino opulento e avvolgente, dal tannino morbido: giovane promessa da attendere in cantina.'],
+    [2023,'Luminosa','Annata solare con frutto maturo e freschezza vibrante.','Stagione calda e regolare. Vino luminoso e slanciato, con note di frutta rossa e spezie delicate.'],
+    [2024,'Viva','Annata fresca con acidità brillante e profumi mediterranei.','Primavera mite e estate equilibrata. Vino agile e sapido, dal finale pulito e persistente.'],
+    [2025,'Generosa','Annata calda e rotonda, ricca di estratto e morbidezza.','Estate lunga e soleggiata. Vino pieno e avvolgente, con tannino setoso e frutto maturo.'],
+    [2026,'Giovane','Annata precoce e fragrante, dal potenziale immediato.','Vendemmia anticipata. Vino fresco e fragrante, con aromaticità brillante e una beva scorrevole.'],
+  ];
+
+  DECADES = [
+    { key: '1970', label: "Anni '70", lo: 1977, hi: 1979 },
+    { key: '1980', label: "Anni '80", lo: 1980, hi: 1989 },
+    { key: '1990', label: "Anni '90", lo: 1990, hi: 1999 },
+    { key: '2000', label: 'Anni 2000', lo: 2000, hi: 2009 },
+    { key: '2010', label: 'Anni 2010', lo: 2010, hi: 2019 },
+    { key: '2020', label: 'Anni 2020', lo: 2020, hi: 2029 },
+  ];
+
+  vintages() {
+    return this.VINTAGE_RAW.map(r => ({ year: r[0], char: r[1], note: r[2], detail: r[3] }));
+  }
+
+  expDefs(t) {
+    return [
+      { key: 'classica', name: { it: 'Degustazione Classica', en: 'Classic Tasting', fr: 'Dégustation Classique', de: 'Klassische Verkostung' }[this.state.lang],
+        desc: { it: 'Quattro vini in degustazione guidata, accompagnati dai sapori del territorio.', en: 'Four wines in a guided tasting, paired with local flavours.', fr: 'Quatre vins en dégustation guidée, accompagnés des saveurs du terroir.', de: 'Vier Weine in einer geführten Verkostung mit regionalen Spezialitäten.' }[this.state.lang],
+        meta: { it: '45 min · 4 vini', en: '45 min · 4 wines', fr: '45 min · 4 vins', de: '45 Min · 4 Weine' }[this.state.lang],
+        price: '€30', priceUnit: t.perPerson, onRequest: false },
+      { key: 'verticale', name: { it: 'Verticale di Schioppettino', en: 'Schioppettino Vertical', fr: 'Verticale de Schioppettino', de: 'Schioppettino-Vertikale' }[this.state.lang],
+        desc: { it: 'Tre annate di Schioppettino di Cialla a confronto, raccontate in cantina.', en: 'Three vintages of Schioppettino di Cialla compared, told in the cellar.', fr: 'Trois millésimes de Schioppettino di Cialla comparés, racontés au chai.', de: 'Drei Jahrgänge Schioppettino di Cialla im Vergleich, erzählt im Keller.' }[this.state.lang],
+        meta: { it: '90 min · 3 annate', en: '90 min · 3 vintages', fr: '90 min · 3 millésimes', de: '90 Min · 3 Jahrgänge' }[this.state.lang],
+        price: '€80', priceUnit: t.perPerson, onRequest: false },
+      { key: 'sumisura', name: { it: 'Su Misura', en: 'Bespoke', fr: 'Sur Mesure', de: 'Maßgeschneidert' }[this.state.lang],
+        desc: { it: 'Un\u2019esperienza costruita su di te: pranzo in vigna, cene, visite private. Concordabile via mail.', en: 'An experience built around you: lunch in the vineyard, dinners, private visits. Arranged by email.', fr: 'Une expérience sur mesure : déjeuner dans la vigne, dîners, visites privées. À convenir par email.', de: 'Ein Erlebnis nach Maß: Essen im Weinberg, Dinner, private Besuche. Per E-Mail vereinbar.' }[this.state.lang],
+        meta: { it: 'Su appuntamento', en: 'By appointment', fr: 'Sur rendez-vous', de: 'Nach Vereinbarung' }[this.state.lang],
+        price: t.onRequest, priceUnit: '', onRequest: true },
+    ];
+  }
+
+  setField(k, v) { this.setState(s => ({ booking: { ...s.booking, [k]: v } })); }
+
+  renderVals() {
+    const t = this.I18N[this.state.lang];
+    const sel = this.state.lang;
+
+    const langs = ['it', 'en', 'fr', 'de'].map(code => ({
+      code, label: code.toUpperCase(),
+      bg: code === sel ? '#7E1726' : 'transparent',
+      fg: code === sel ? '#F5EFE3' : '#9A7A30',
+      select: () => this.setState({ lang: code }),
+    }));
+
+    const decades = this.DECADES.map(d => ({
+      key: d.key, label: d.label,
+      bg: d.key === this.state.decade ? '#7E1726' : 'transparent',
+      fg: d.key === this.state.decade ? '#F5EFE3' : '#5A463F',
+      border: d.key === this.state.decade ? '#7E1726' : 'rgba(42,26,23,0.22)',
+      select: () => this.setState({ decade: d.key }),
+    }));
+
+    const dec = this.DECADES.find(d => d.key === this.state.decade);
+    const decadeVintages = this.vintages().filter(v => v.year >= dec.lo && v.year <= dec.hi)
+      .map(v => ({ ...v, open: () => this.setState({ selectedYear: v.year }) }));
+
+    const selectedVintage = this.state.selectedYear ? this.vintages().find(v => v.year === this.state.selectedYear) : null;
+    const vintageMailto = selectedVintage
+      ? 'mailto:info@ronchidicialla.it?subject=' + encodeURIComponent('Richiesta annata ' + selectedVintage.year + ' — Schioppettino di Cialla')
+      : 'mailto:info@ronchidicialla.it';
+
+    const defs = this.expDefs(t);
+    const expList = defs.map(e => ({
+      ...e,
+      active: e.key === this.state.booking.exp,
+      btnBg: e.key === this.state.booking.exp ? '#C01F2E' : '#2C0A10',
+      btnFg: e.key === this.state.booking.exp ? '#F7F1E4' : '#E6D29A',
+      priceFont: e.onRequest ? '22px' : '38px',
+      btnLabel: e.key === this.state.booking.exp
+        ? { it: 'Selezionata ✓', en: 'Selected ✓', fr: 'Sélectionnée ✓', de: 'Gewählt ✓' }[sel]
+        : { it: 'Prenota', en: 'Book', fr: 'Réserver', de: 'Buchen' }[sel],
+      select: () => { window.location.href = 'prenota.html?exp=' + e.key; },
+    }));
+
+    const expChips = defs.map(e => ({
+      name: e.name,
+      bg: e.key === this.state.booking.exp ? '#C01F2E' : 'transparent',
+      fg: e.key === this.state.booking.exp ? '#F7F1E4' : '#C9B79E',
+      border: e.key === this.state.booking.exp ? '#C01F2E' : 'rgba(230,210,154,0.3)',
+      select: () => this.setField('exp', e.key),
+    }));
+
+    const selExpRaw = defs.find(e => e.key === this.state.booking.exp);
+    const selectedExp = { ...selExpRaw, priceFont: selExpRaw.onRequest ? '30px' : '52px' };
+    const confMessage = {
+      it: 'Grazie! Ti risponderemo via email per confermare disponibilità e dettagli dell\u2019esperienza.',
+      en: 'Thank you! We\u2019ll reply by email to confirm availability and details of your experience.',
+      fr: 'Merci ! Nous vous répondrons par email pour confirmer la disponibilité et les détails.',
+      de: 'Danke! Wir antworten per E-Mail, um Verfügbarkeit und Details zu bestätigen.',
+    }[sel];
+
+    return {
+      t, langs, decades, decadeVintages, selectedVintage, vintageMailto,
+      wines: this.WINES.map(w => ({ ...w, bg: "url('" + (typeof encodeURI === 'function' ? encodeURI(w.img) : w.img) + "')", cardBg: w.cardBg || 'transparent' })), expList, expChips, selectedExp,
+      booking: this.state.booking, formVisible: !this.state.booking.sent, confMessage,
+      onDate: (e) => this.setField('date', e.target.value),
+      onName: (e) => this.setField('name', e.target.value),
+      onEmail: (e) => this.setField('email', e.target.value),
+      onNote: (e) => this.setField('note', e.target.value),
+      incGuests: () => this.setField('guests', Math.min(20, this.state.booking.guests + 1)),
+      decGuests: () => this.setField('guests', Math.max(1, this.state.booking.guests - 1)),
+      submitBooking: () => this.setState(s => ({ booking: { ...s.booking, sent: true } })),
+      resetBooking: () => this.setState(s => ({ booking: { ...s.booking, sent: false } })),
+      closeVintage: () => this.setState({ selectedYear: null }),
+      menuOpenStr: this.state.menuOpen ? 'true' : 'false',
+      burgerTop: this.state.menuOpen ? 'translateY(6.5px) rotate(45deg)' : 'none',
+      burgerMid: this.state.menuOpen ? '0' : '1',
+      burgerBot: this.state.menuOpen ? 'translateY(-6.5px) rotate(-45deg)' : 'none',
+      toggleMenu: () => this.setState(s => ({ menuOpen: !s.menuOpen })),
+      closeMenu: () => this.setState({ menuOpen: false }),
+    };
+  }
+}
+</script>
+</script>
+<link rel="stylesheet" href="chatbot/chat-widget.css">
+<script src="chatbot/chat-widget.js" defer></script>
+</body>
+</html>

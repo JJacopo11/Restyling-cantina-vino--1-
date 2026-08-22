@@ -1,0 +1,10 @@
+chatbot/.env
+chatbot/.env.*
+!chatbot/.env.example
+chatbot/node_modules/
+
+.env
+.nuxt/
+.output/
+node_modules/
+build_log.txt

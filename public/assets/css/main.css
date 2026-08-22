@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap');
+
+:root {
+  --cream: #f5efe3;
+  --ink: #2a1a17;
+  --muted: #5a463f;
+  --gold: #9a7a30;
+  --red: #c01f2e;
+  --wine: #2c0a10;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--cream); color: var(--ink); font-family: 'Jost', sans-serif; }
+button, input { font: inherit; }
+::selection { background: var(--red); color: var(--cream); }
+
+.mapboxgl-ctrl-attrib { font-size: 9px; }
