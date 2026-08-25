@@ -1,12 +1,14 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import { WINES } from '~/data/wines'
 
 const assetUrl = useAssetUrl()
+const { t } = useI18n()
 </script>
 
 <template>
   <section id="vini" class="content-section wines">
-    <div class="center-head"><p class="eyebrow">I nostri vini</p><h2>Vitigni autoctoni, vini di Cialla</h2></div>
+    <div class="center-head"><p class="eyebrow">{{ t('wines.kicker') }}</p><h2>{{ t('wines.title') }}</h2></div>
     <div class="wine-grid">
       <article v-for="wine in WINES" :key="wine.name" class="wine-card">
         <div class="bottle"><img :src="assetUrl(wine.image)" :alt="wine.name"></div>

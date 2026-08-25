@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { DECADES, VINTAGES } from '~/data/vintages'
 import type { Vintage } from '~/types/content'
 
+const { t } = useI18n()
 const selectedDecade = ref('1970')
 const selectedVintage = ref<Vintage | null>(null)
 
@@ -16,9 +18,9 @@ const visibleVintages = computed(() => {
   <section id="annate" class="vintages">
     <div class="section-inner">
       <div class="section-head narrow">
-        <p class="eyebrow">Vini d’Annata</p>
-        <h2>Mezzo secolo di vendemmie</h2>
-        <p>Dal 1977 a oggi: la verticale storica dello Schioppettino di Cialla, annata per annata. Seleziona un decennio e apri una scheda.</p>
+        <p class="eyebrow">{{ t('vintages.kicker') }}</p>
+        <h2>{{ t('vintages.title') }}</h2>
+        <p>{{ t('vintages.sub') }}</p>
       </div>
       <div class="decades">
         <button v-for="decade in DECADES" :key="decade.key" :class="{ selected: selectedDecade === decade.key }" @click="selectedDecade = decade.key">{{ decade.label }}</button>
@@ -34,13 +36,13 @@ const visibleVintages = computed(() => {
   <div v-if="selectedVintage" class="drawer-backdrop" @click="selectedVintage = null">
     <aside class="vintage-drawer" @click.stop>
       <button class="drawer-close" aria-label="Chiudi" @click="selectedVintage = null">&times;</button>
-      <p class="eyebrow">Vini d’Annata &middot; Schioppettino di Cialla</p>
+      <p class="eyebrow">{{ t('vintages.kicker') }} &middot; Schioppettino di Cialla</p>
       <strong class="drawer-year">{{ selectedVintage.year }}</strong>
       <span class="drawer-tag">{{ selectedVintage.character }}</span>
-      <p class="eyebrow">Note di vendemmia</p>
+      <p class="eyebrow">{{ t('vintages.notesLabel') }}</p>
       <em>{{ selectedVintage.note }}</em>
       <p>{{ selectedVintage.detail }}</p>
-      <a class="button" :href="`mailto:info@ronchidicialla.it?subject=Richiesta annata ${selectedVintage.year}`">Richiedi questa annata</a>
+      <a class="button" :href="`mailto:info@ronchidicialla.it?subject=Richiesta annata ${selectedVintage.year}`">{{ t('vintages.reqBtn') }}</a>
     </aside>
   </div>
 </template>

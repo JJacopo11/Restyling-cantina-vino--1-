@@ -1,12 +1,15 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
 const assetUrl = useAssetUrl()
+const { t } = useI18n()
 </script>
 
 <template>
   <section id="azienda" class="content-section story">
     <div>
-      <p class="eyebrow">Dal 1970 - Famiglia Rapuzzi</p>
-      <h2>Un'azienda-famiglia tra i ronchi di Cialla</h2>
+      <p class="eyebrow">{{ t('story.kicker') }}</p>
+      <h2>{{ t('story.title') }}</h2>
       <p>La famiglia cosi riunita in sinergia, rappresenta oggi un formidabile motore di tradizione e conoscenza scientifica che contraddistingue questa piccola ma esclusiva Azienda-Famiglia.</p>
       <div class="story-stats">
         <div><strong>1970</strong><span>La rinascita</span></div>

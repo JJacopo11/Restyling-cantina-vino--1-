@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
 const assetUrl = useAssetUrl()
+const { t } = useI18n()
 </script>
 
 <template>
@@ -7,12 +10,12 @@ const assetUrl = useAssetUrl()
     <div class="hero-mark" :style="{ '--hero-mark-image': `url('${assetUrl('/assets/emblem.png')}')` }" />
     <div class="hero-frame" />
     <div class="hero-content">
-      <p class="eyebrow">Cialla - Colli Orientali del Friuli</p>
-      <h1>Ronchi di Cialla</h1>
-      <p>Produzione di vini solo da varieta autoctone nei Colli Orientali del Friuli dal 1970.</p>
+      <p class="eyebrow">{{ t('hero.kicker') }}</p>
+      <h1>{{ t('hero.title') }}</h1>
+      <p>{{ t('hero.sub') }}</p>
       <div class="hero-actions">
-        <a href="#vini" class="button">Scopri i vini</a>
-        <NuxtLink to="/prenota" class="button button-ghost">Prenota un'esperienza</NuxtLink>
+        <a href="#vini" class="button">{{ t('hero.cta1') }}</a>
+        <NuxtLink to="/prenota" class="button button-ghost">{{ t('hero.cta2') }}</NuxtLink>
       </div>
     </div>
   </section>

@@ -1,15 +1,21 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const assetUrl = useAssetUrl()
 const menuOpen = ref(false)
+const { t, locale } = useI18n()
+const languages = ['it', 'en', 'fr', 'de'] as const
+function setLang(code: string) {
+  locale.value = code
+}
 </script>
 
 <template>
   <header class="site-header">
     <a href="#top" class="brand" @click="menuOpen = false"><img :src="assetUrl('/assets/emblem.png')" alt="Ronchi di Cialla"><span><strong>RONCHI DI CIALLA</strong><small>Colli Orientali del Friuli</small></span></a>
-    <nav class="main-nav" :class="{ open: menuOpen }"><a href="#azienda" @click="menuOpen = false">Azienda</a><a href="#territorio" @click="menuOpen = false">Territorio</a><a href="#vini" @click="menuOpen = false">Vini</a><a href="#annate" @click="menuOpen = false">Annate</a><a href="#esperienze" @click="menuOpen = false">Esperienze</a><a href="#contatti" @click="menuOpen = false">Contatti</a></nav>
-    <div class="header-actions"><div class="languages"><button class="active">IT</button><button>EN</button><button>FR</button><button>DE</button></div><button class="menu-toggle" aria-label="Menu" :aria-expanded="menuOpen" @click="menuOpen = !menuOpen"><i /><i /><i /></button></div>
+    <nav class="main-nav" :class="{ open: menuOpen }"><a href="#azienda" @click="menuOpen = false">{{ t('nav.azienda') }}</a><a href="#territorio" @click="menuOpen = false">{{ t('nav.territorio') }}</a><a href="#vini" @click="menuOpen = false">{{ t('nav.vini') }}</a><a href="#annate" @click="menuOpen = false">{{ t('nav.annate') }}</a><a href="#esperienze" @click="menuOpen = false">{{ t('nav.esperienze') }}</a><a href="#contatti" @click="menuOpen = false">{{ t('nav.contatti') }}</a></nav>
+    <div class="header-actions"><div class="languages"><button v-for="code in languages" :key="code" :class="{ active: locale === code }" @click="setLang(code)">{{ code.toUpperCase() }}</button></div><button class="menu-toggle" aria-label="Menu" :aria-expanded="menuOpen" @click="menuOpen = !menuOpen"><i /><i /><i /></button></div>
   </header>
 </template>
 

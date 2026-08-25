@@ -1,12 +1,15 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import VineyardMap from '~/components/map/VineyardMap.vue'
+
+const { t } = useI18n()
 </script>
 
 <template>
   <section id="territorio" class="content-section territory">
     <div class="section-intro">
-      <p class="eyebrow">Il territorio</p>
-      <h2>La mappa dei nostri vigneti</h2>
+      <p class="eyebrow">{{ t('territory.kicker') }}</p>
+      <h2>{{ t('territory.title') }}</h2>
     </div>
     <div class="territory-grid">
       <ClientOnly>

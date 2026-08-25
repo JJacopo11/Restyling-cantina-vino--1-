@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
 const assetUrl = useAssetUrl()
+const { t } = useI18n()
 </script>
 
 <template>
@@ -10,21 +13,21 @@ const assetUrl = useAssetUrl()
         <p>Azienda Agricola Ronchi di Cialla<br>di Paolo e Dina Rapuzzi &amp; Figli<br>Via Cialla, 47 — 33040 Prepotto (UD), Italia<br>Tel. +39 0432 731679<br><a href="mailto:info@ronchidicialla.it">info@ronchidicialla.it</a></p>
       </div>
       <div>
-        <p class="footer-label">Vini</p>
+        <p class="footer-label">{{ t('footer.winesLabel') }}</p>
         <a href="#vini">Schioppettino di Cialla</a>
         <a href="#vini">Refosco di Cialla</a>
         <a href="#vini">Ribolla Gialla</a>
         <a href="#annate">Vini d’Annata</a>
       </div>
       <div>
-        <p class="footer-label">Esplora</p>
+        <p class="footer-label">{{ t('footer.explore') }}</p>
         <a href="#esperienze">Esperienze</a>
         <a href="#azienda">Azienda</a>
         <a href="#territorio">Territorio</a>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2026 Ronchi di Cialla — Tutti i diritti riservati</span>
+      <span>© 2026 Ronchi di Cialla — {{ t('footer.rights') }}</span>
       <span>Colli Orientali del Friuli DOC &middot; Cru Cialla</span>
     </div>
   </footer>

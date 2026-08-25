@@ -1,23 +1,26 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
 const assetUrl = useAssetUrl()
+const { t } = useI18n()
 </script>
 
 <template>
   <section class="pillars">
     <div class="section-inner">
-      <div class="section-head"><p class="eyebrow">Il nostro mondo</p><h2>Tre radici, una sola filosofia</h2></div>
+      <div class="section-head"><p class="eyebrow">{{ t('pillars.kicker') }}</p><h2>{{ t('pillars.title') }}</h2></div>
       <div class="pillar-grid">
         <article>
           <div class="pillar-image"><img :src="assetUrl('/uploads/SCHIOPPETTINO-01.jpg')" alt="Schioppettino"></div>
-          <h3>Lo Schioppettino</h3>
+          <h3>{{ t('pillars.schioppettino') }}</h3>
           <p>La stessa filosofia che adottiamo in vigna ci guida in vinificazione: pazienza, rispetto del frutto, lungo affinamento.</p>
-          <a href="#schioppettino-story">Approfondisci <span>&rarr;</span></a>
+          <a href="#schioppettino-story">{{ t('pillars.readMore') }} <span>&rarr;</span></a>
         </article>
         <article>
           <div class="pillar-image"><img :src="assetUrl('/uploads/biodiversityfriend.png')" alt="Biodiversity Friend"></div>
-          <h3>Biodiversity Friend</h3>
+          <h3>{{ t('pillars.biodiversity') }}</h3>
           <p>Ronchi sono le colline coltivate a vigna; Cialla è una valle protetta dai boschi, dove la natura detta il ritmo.</p>
-          <a href="#biodiversity-story">Approfondisci <span>&rarr;</span></a>
+          <a href="#biodiversity-story">{{ t('pillars.readMore') }} <span>&rarr;</span></a>
         </article>
       </div>
     </div>

@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { EXPERIENCES } from '~/data/experiences'
+
+type ExpKey = 'classica' | 'verticale' | 'sumisura'
 
 const assetUrl = useAssetUrl()
 const { submitBooking } = useBookingApi()
+const { t } = useI18n()
 
-const selectedExperience = ref<'classica' | 'verticale' | 'sumisura'>('classica')
+const selectedExperience = ref<ExpKey>('classica')
 const guests = ref(2)
 const name = ref('')
 const email = ref('')
@@ -16,14 +20,19 @@ const submitting = ref(false)
 
 const activeExperience = computed(() => EXPERIENCES.find(item => item.key === selectedExperience.value)!)
 
-function goToBookingPage(key: typeof selectedExperience.value) {
+const expName = (key: string) => t(`experiences.items.${key}.name`)
+const expMeta = (key: string) => t(`experiences.items.${key}.meta`)
+const expDesc = (key: string) => t(`experiences.items.${key}.desc`)
+const expPrice = (exp: { key: string; price: string }) => exp.key === 'sumisura' ? t('experiences.onRequest') : exp.price
+
+function goToBookingPage(key: ExpKey) {
   selectedExperience.value = key
   navigateTo({ path: '/prenota', query: { exp: key } })
 }
 
 async function onSubmit() {
   if (!date.value || !name.value.trim() || !email.value.trim()) {
-    submitError.value = 'Completa data, nome ed email'
+    submitError.value = t('experiences.validateError')
     return
   }
   submitting.value = true
@@ -32,7 +41,7 @@ async function onSubmit() {
     await submitBooking({ experience: selectedExperience.value, date: date.value, guests: guests.value, name: name.value.trim(), email: email.value.trim() })
     bookingSent.value = true
   } catch {
-    submitError.value = 'Invio non riuscito, riprova'
+    submitError.value = t('experiences.sendError')
   } finally {
     submitting.value = false
   }
@@ -51,47 +60,47 @@ function resetBooking() {
   <section id="esperienze" class="content-section experiences">
     <div class="experience-head">
       <div>
-        <p class="eyebrow">Esperienze in cantina</p>
-        <h2>Vieni a Cialla</h2>
-        <p>Tre modi per incontrare i nostri vini, nel cuore della valle.</p>
+        <p class="eyebrow">{{ t('experiences.kicker') }}</p>
+        <h2>{{ t('experiences.title') }}</h2>
+        <p>{{ t('experiences.sub') }}</p>
       </div>
       <img :src="assetUrl('/uploads/zio in vigna migliorata.png')" alt="Vieni a Cialla">
     </div>
     <div class="experience-grid">
       <article v-for="experience in EXPERIENCES" :key="experience.key" :class="{ selected: selectedExperience === experience.key }">
-        <span>{{ experience.meta }}</span>
-        <h3>{{ experience.name }}</h3>
-        <p>{{ experience.description }}</p>
-        <strong>{{ experience.price }}</strong>
-        <button @click="goToBookingPage(experience.key)">{{ selectedExperience === experience.key ? 'Selezionata ✓' : 'Prenota' }}</button>
+        <span>{{ expMeta(experience.key) }}</span>
+        <h3>{{ expName(experience.key) }}</h3>
+        <p>{{ expDesc(experience.key) }}</p>
+        <strong>{{ expPrice(experience) }}</strong>
+        <button @click="goToBookingPage(experience.key)">{{ selectedExperience === experience.key ? t('experiences.selected') : t('experiences.book') }}</button>
       </article>
     </div>
     <div class="booking-panel">
       <div>
-        <p class="eyebrow">Prenota la tua esperienza</p>
-        <h3>{{ activeExperience.name }}</h3>
-        <p>{{ activeExperience.description }}</p>
-        <strong>{{ activeExperience.price }} <small>&middot; {{ activeExperience.meta }}</small></strong>
+        <p class="eyebrow">{{ t('experiences.formKicker') }}</p>
+        <h3>{{ expName(activeExperience.key) }}</h3>
+        <p>{{ expDesc(activeExperience.key) }}</p>
+        <strong>{{ expPrice(activeExperience) }} <small>&middot; {{ expMeta(activeExperience.key) }}</small></strong>
       </div>
       <div v-if="!bookingSent" class="booking-form">
-        <label>Esperienza</label>
+        <label>{{ t('experiences.formExp') }}</label>
         <div class="chips">
-          <button v-for="experience in EXPERIENCES" :key="experience.key" :class="{ selected: selectedExperience === experience.key }" @click="selectedExperience = experience.key">{{ experience.name }}</button>
+          <button v-for="experience in EXPERIENCES" :key="experience.key" :class="{ selected: selectedExperience === experience.key }" @click="selectedExperience = experience.key">{{ expName(experience.key) }}</button>
         </div>
         <div class="form-grid">
-          <label>Data<input v-model="date" type="date"></label>
-          <label>Persone<div class="guest-stepper"><button @click="guests = Math.max(1, guests - 1)">&minus;</button><output>{{ guests }}</output><button @click="guests = Math.min(20, guests + 1)">+</button></div></label>
-          <label>Nome e cognome<input v-model="name" type="text" placeholder="Mario Rossi"></label>
-          <label>Email<input v-model="email" type="email" placeholder="mario@email.it"></label>
+          <label>{{ t('experiences.formDate') }}<input v-model="date" type="date"></label>
+          <label>{{ t('experiences.formGuests') }}<div class="guest-stepper"><button @click="guests = Math.max(1, guests - 1)">&minus;</button><output>{{ guests }}</output><button @click="guests = Math.min(20, guests + 1)">+</button></div></label>
+          <label>{{ t('experiences.formName') }}<input v-model="name" type="text" placeholder="Mario Rossi"></label>
+          <label>{{ t('experiences.formEmail') }}<input v-model="email" type="email" placeholder="mario@email.it"></label>
         </div>
-        <button class="submit" :disabled="submitting" @click="onSubmit">{{ submitting ? 'Invio in corso…' : 'Invia richiesta' }}</button>
+        <button class="submit" :disabled="submitting" @click="onSubmit">{{ submitting ? t('experiences.submitting') : t('experiences.formSubmit') }}</button>
         <p v-if="submitError" class="form-error">{{ submitError }}</p>
       </div>
       <div v-else class="confirmation">
         <strong>✓</strong>
-        <h4>Richiesta inviata</h4>
-        <p>Grazie! Ti risponderemo via email per confermare disponibilità e dettagli dell’esperienza.</p>
-        <button @click="resetBooking">Invia un’altra richiesta</button>
+        <h4>{{ t('experiences.confTitle') }}</h4>
+        <p>{{ t('experiences.confText') }}</p>
+        <button @click="resetBooking">{{ t('experiences.confAnother') }}</button>
       </div>
     </div>
     <img class="signature" :src="assetUrl('/uploads/HP-firma.png')" alt="Firma">
