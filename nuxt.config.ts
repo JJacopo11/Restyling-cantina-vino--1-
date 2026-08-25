@@ -1,11 +1,18 @@
 const repositoryName = process.env.GITHUB_REPOSITORY?.split('/')[1] ?? ''
 const appBaseUrl = process.env.NUXT_BASE_URL || (repositoryName ? `/${repositoryName}/` : '/')
+const mapboxToken = process.env.NUXT_PUBLIC_MAPBOX_TOKEN?.trim() || 'pk.eyJ1Ijoic3Ryb2JvZmxleCIsImEiOiJjbXQxYnR3aHUwZ240MnhyMnprNWh3eDdoIn0.NmG-ARycoIm0dKhYMWIAig'
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   app: {
     baseURL: appBaseUrl
+  },
+  nitro: {
+    prerender: {
+      crawlLinks: false,
+      routes: ['/', '/prenota']
+    }
   },
   css: ['mapbox-gl/dist/mapbox-gl.css', '~/assets/css/main.css'],
   build: {
@@ -26,7 +33,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       // Public pk.* token from the original site; override per-env with NUXT_PUBLIC_MAPBOX_TOKEN.
-      mapboxToken: process.env.NUXT_PUBLIC_MAPBOX_TOKEN ?? 'pk.eyJ1Ijoic3Ryb2JvZmxleCIsImEiOiJjbXQxYnR3aHUwZ240MnhyMnprNWh3eDdoIn0.NmG-ARycoIm0dKhYMWIAig',
+      mapboxToken,
       // Base URL of the chatbot/server.js booking API; empty means same-origin (local dev only).
       bookingApiUrl: process.env.NUXT_PUBLIC_BOOKING_API_URL ?? ''
     }

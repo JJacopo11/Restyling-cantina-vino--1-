@@ -10,6 +10,7 @@ const { t, locale } = useI18n()
 const assetUrl = useAssetUrl()
 const { submitBooking } = useBookingApi()
 const route = useRoute()
+const bookingHeroMark = computed(() => `url('${assetUrl('/assets/emblem.png')}')`)
 
 const keys: ExpKey[] = ['classica', 'verticale', 'sumisura']
 const queryExp = route.query.exp as ExpKey | undefined
@@ -91,7 +92,7 @@ useHead({ title: computed(() => `${t('prenota.title')} | Ronchi di Cialla`) })
       <NuxtLink class="brand" to="/#top"><img :src="assetUrl('/assets/emblem.png')" alt=""><span><strong>RONCHI DI CIALLA</strong><small>Colli Orientali del Friuli</small></span></NuxtLink>
       <NuxtLink class="back" to="/#esperienze">{{ t('prenota.back') }}</NuxtLink>
     </header>
-    <section class="hero"><div class="hero-inner"><p class="eyebrow">{{ t('prenota.kicker') }}</p><h1>{{ t('prenota.title') }}</h1><p>{{ t('prenota.sub') }}</p></div></section>
+    <section class="hero" :style="{ '--booking-hero-mark': bookingHeroMark }"><div class="hero-inner"><p class="eyebrow">{{ t('prenota.kicker') }}</p><h1>{{ t('prenota.title') }}</h1><p>{{ t('prenota.sub') }}</p></div></section>
     <main class="booking-shell">
       <div class="booking-grid">
         <section class="panel form-panel">
@@ -156,7 +157,7 @@ a{color:inherit}
 .brand small{margin-top:5px;color:#9A7A30;font-size:8px;letter-spacing:.3em;text-transform:uppercase}
 .back{color:#7E1726;text-decoration:none;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
 .hero{background:var(--wine);color:var(--cream);padding:76px 32px 96px;position:relative}
-.hero:after{content:'';position:absolute;right:8%;top:18%;width:280px;height:280px;opacity:.08;background:url('/assets/emblem.png') center/contain no-repeat}
+.hero:after{content:'';position:absolute;right:8%;top:18%;width:280px;height:280px;opacity:.08;background:var(--booking-hero-mark) center/contain no-repeat}
 .hero-inner{max-width:760px;margin:auto;position:relative;z-index:1}
 .eyebrow{color:#E6D29A;font-size:11px;letter-spacing:.34em;text-transform:uppercase;margin:0 0 18px}
 h1,h2,h3{font-family:'Cormorant Garamond',serif;font-weight:500}
