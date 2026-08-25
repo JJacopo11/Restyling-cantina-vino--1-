@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prenota un'esperienza | Ronchi di Cialla</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root { --wine: #2C0A10; --red: #C01F2E; --gold: #C2A04A; --cream: #F5EFE3; --paper: #FCF9F2; --ink: #2A1A17; --muted: #806E64; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--cream); color: var(--ink); font-family: 'Jost', sans-serif; }
+    button, input { font: inherit; }
+    a { color: inherit; }
+    .page { min-height: 100vh; overflow: hidden; }
+    .topbar { max-width: 1240px; margin: auto; padding: 20px 32px; display: flex; justify-content: space-between; align-items: center; }
+    .brand { display: flex; gap: 12px; align-items: center; text-decoration: none; }
+    .brand img { width: 42px; height: 42px; object-fit: contain; }
+    .brand span { display: flex; flex-direction: column; line-height: 1; }
+    .brand strong { font: 600 21px 'Cormorant Garamond', serif; letter-spacing: .04em; }
+    .brand small { margin-top: 5px; color: #9A7A30; font-size: 8px; letter-spacing: .3em; text-transform: uppercase; }
+    .back { color: #7E1726; text-decoration: none; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; }
+    .hero { background: var(--wine); color: var(--cream); padding: 76px 32px 96px; position: relative; }
+    .hero:after { content: ''; position: absolute; right: 8%; top: 18%; width: 280px; height: 280px; opacity: .08; background: url('assets/emblem.png') center/contain no-repeat; }
+    .hero-inner { max-width: 760px; margin: auto; position: relative; z-index: 1; }
+    .eyebrow { color: #E6D29A; font-size: 11px; letter-spacing: .34em; text-transform: uppercase; margin: 0 0 18px; }
+    h1, h2, h3 { font-family: 'Cormorant Garamond', serif; font-weight: 500; }
+    h1 { font-size: clamp(48px, 7vw, 88px); line-height: .94; margin: 0 0 20px; }
+    .hero p:last-child { max-width: 48ch; color: #C9B79E; font-weight: 300; line-height: 1.7; margin: 0; }
+    .booking-shell { max-width: 1160px; margin: -42px auto 90px; padding: 0 24px; position: relative; z-index: 2; }
+    .booking-grid { display: flex; flex-direction: column; gap: 18px; }
+    .panel { background: var(--paper); border: 1px solid rgba(42,26,23,.12); box-shadow: 0 26px 60px rgba(42,26,23,.12); }
+    .form-panel { padding: clamp(26px, 4vw, 50px); }
+    .section-label { color: #9A7A30; font-size: 10px; letter-spacing: .25em; text-transform: uppercase; margin: 0 0 12px; }
+    h2 { font-size: clamp(32px, 4vw, 50px); line-height: 1; margin: 0 0 28px; }
+    .field-label { display: block; color: #806E64; font-size: 10px; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; margin: 0 0 9px; }
+    .experiences { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 28px; }
+    .experience { min-height: 74px; padding: 12px; text-align: left; border: 1px solid rgba(42,26,23,.18); background: transparent; color: var(--ink); cursor: pointer; transition: .25s ease; }
+    .experience:hover, .experience.selected { border-color: var(--red); background: #F8E6E1; }
+    .experience strong { display: block; font: 600 18px 'Cormorant Garamond', serif; }
+    .experience small { color: var(--muted); font-size: 10px; }
+    .form-row { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(180px, .65fr); gap: 26px; }
+    .form-row:last-of-type { grid-template-columns: 1fr 1fr; gap: 26px; }
+    .field { margin-bottom: 20px; }
+    input[type=text], input[type=email] { width: 100%; padding: 13px 14px; border: 1px solid rgba(42,26,23,.2); background: #fffdf9; color: var(--ink); outline: none; }
+    input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(194,160,74,.13); }
+    .calendar { width: min(100%, 500px); border: 1px solid rgba(42,26,23,.16); background: #fffdf9; padding: 14px; }
+    .calendar-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+    .calendar-head strong { font: 600 22px 'Cormorant Garamond', serif; }
+    .cal-nav { border: 0; background: transparent; color: var(--red); cursor: pointer; font-size: 22px; padding: 2px 8px; }
+    .week, .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
+    .week span { color: var(--gold); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; padding-bottom: 7px; }
+    .day { aspect-ratio: 1.65; border: 0; background: transparent; color: var(--ink); cursor: pointer; font-size: 12px; }
+    .day:hover:not(:disabled), .day.selected { background: var(--red); color: #fff; }
+    .day.muted { color: #C8BFB5; }
+    .day:disabled { color: #D9D1C8; cursor: not-allowed; text-decoration: line-through; }
+    .guests { display: flex; align-items: center; border: 1px solid rgba(42,26,23,.2); background: #fffdf9; }
+    .guests button { width: 44px; height: 44px; border: 0; background: transparent; color: var(--red); cursor: pointer; font-size: 22px; }
+    .guests output { flex: 1; text-align: center; font-size: 14px; }
+    .summary { order: -1; margin-top: 0; background: var(--wine); color: var(--cream); padding: 24px 30px; display: grid; grid-template-columns: minmax(210px, 1.3fr) repeat(4, minmax(120px, .7fr)) minmax(220px, 1.2fr); gap: 22px; align-items: center; }
+    .summary .section-label { grid-column: 1 / -1; margin: 0; }
+    .summary h3 { font-size: 32px; line-height: 1; margin: 0; color: #F4ECDC; }
+    .summary-line { padding: 0 0 0 18px; border-left: 1px solid rgba(230,210,154,.22); display: flex; flex-direction: column; gap: 7px; font-size: 12px; }
+    .summary-line span:first-child { color: #C9B79E; }
+    .summary-line strong { color: #E6D29A; text-align: right; }
+    .summary-note { color: #9C8369; font-size: 11px; line-height: 1.55; margin: 0; }
+    .submit { width: 100%; border: 0; background: var(--red); color: #fff; padding: 16px; cursor: pointer; font-size: 11px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; transition: background .25s ease, transform .25s ease; }
+    .submit:hover { background: #A8182A; transform: translateY(-2px); }
+    .confirmation { display: none; padding: 28px; border: 1px solid rgba(194,160,74,.4); color: #E6D29A; line-height: 1.7; }
+    .confirmation.visible { display: block; }
+    @media (max-width: 980px) { .summary { grid-template-columns: repeat(4, 1fr); } .summary h3 { grid-column: span 2; } .summary-note { grid-column: span 2; } }
+    @media (max-width: 800px) { .form-row, .form-row:last-of-type { grid-template-columns: 1fr 1fr; } .summary { grid-template-columns: repeat(2, 1fr); } .summary h3, .summary-note { grid-column: 1 / -1; } }
+    @media (max-width: 560px) { .topbar { padding: 16px 20px; } .brand strong { font-size: 18px; } .brand small { font-size: 7px; } .hero { padding: 56px 22px 82px; } .booking-shell { padding: 0 14px; } .form-row, .form-row:last-of-type, .experiences { grid-template-columns: 1fr; } .form-panel, .summary { padding: 24px; } .summary-line { padding: 12px 0 0; border-left: 0; border-top: 1px solid rgba(230,210,154,.22); } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <a class="brand" href="Ronchi di Cialla.dc.html#top"><img src="assets/emblem.png" alt=""><span><strong>RONCHI DI CIALLA</strong><small>Colli Orientali del Friuli</small></span></a>
+      <a class="back" href="Ronchi di Cialla.dc.html#esperienze">Torna al sito</a>
+    </header>
+    <section class="hero"><div class="hero-inner"><p class="eyebrow">Esperienze in cantina</p><h1>Vieni a Cialla</h1><p>Scegli il tuo momento tra i ronchi. Ti ricontatteremo via email per confermare disponibilità e dettagli della visita.</p></div></section>
+    <main class="booking-shell">
+      <div class="booking-grid">
+        <section class="panel form-panel">
+          <p class="section-label">01 · La tua esperienza</p><h2>Prenota con calma</h2>
+          <div class="field"><span class="field-label">Scegli una proposta</span><div class="experiences" id="experiences"></div></div>
+          <div class="form-row"><div class="field"><span class="field-label">Scegli una data</span><div class="calendar"><div class="calendar-head"><button class="cal-nav" id="prev" type="button" aria-label="Mese precedente">‹</button><strong id="month"></strong><button class="cal-nav" id="next" type="button" aria-label="Mese successivo">›</button></div><div class="week"><span>Lun</span><span>Mar</span><span>Mer</span><span>Gio</span><span>Ven</span><span>Sab</span><span>Dom</span></div><div class="days" id="days"></div></div></div><div class="field"><span class="field-label">Numero di persone</span><div class="guests"><button id="minus" type="button" aria-label="Diminuisci persone">−</button><output id="guest-count">2</output><button id="plus" type="button" aria-label="Aumenta persone">+</button></div></div></div>
+          <div class="form-row"><div class="field"><label class="field-label" for="name">Nome e cognome</label><input id="name" type="text" placeholder="Mario Rossi" required></div><div class="field"><label class="field-label" for="email">Email</label><input id="email" type="email" placeholder="mario@email.it" required></div></div>
+          <button class="submit" id="submit" type="button">Invia richiesta</button>
+        </section>
+        <aside class="summary"><p class="section-label">02 · Riepilogo</p><h3 id="summary-name">Degustazione Classica</h3><div class="summary-line"><span>Data</span><strong id="summary-date">Seleziona una data</strong></div><div class="summary-line"><span>Persone</span><strong id="summary-guests">2 persone</strong></div><div class="summary-line"><span>Durata</span><strong id="summary-meta">45 min · 4 vini</strong></div><div class="summary-line"><span>Prezzo</span><strong id="summary-price">€30 a persona</strong></div><p class="summary-note">La richiesta non comporta alcun pagamento. Riceverai conferma di disponibilità via email.</p><div class="confirmation" id="confirmation">Grazie. La tua richiesta è stata ricevuta. Ti risponderemo presto via email.</div></aside>
+      </div>
+    </main>
+  </div>
+  <script>
+    const offers = [{ name: 'Degustazione Classica', meta: '45 min · 4 vini', price: '€30 a persona' }, { name: 'Verticale di Schioppettino', meta: '90 min · 3 annate', price: '€80 a persona' }, { name: 'Su Misura', meta: 'Su appuntamento', price: 'Su richiesta' }];
+    const requestedOffer = new URLSearchParams(window.location.search).get('exp');
+    const state = { offer: requestedOffer === 'verticale' ? 1 : requestedOffer === 'sumisura' ? 2 : 0, guests: 2, date: null, month: new Date() };
+    const experiences = document.querySelector('#experiences');
+    offers.forEach((offer, index) => { const button = document.createElement('button'); button.type = 'button'; button.className = 'experience' + (index === state.offer ? ' selected' : ''); button.innerHTML = `<strong>${offer.name}</strong><small>${offer.meta}</small>`; button.addEventListener('click', () => { state.offer = index; document.querySelectorAll('.experience').forEach(item => item.classList.remove('selected')); button.classList.add('selected'); updateSummary(); }); experiences.appendChild(button); });
+    const pad = value => String(value).padStart(2, '0');
+    const formatDate = date => date ? `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()}` : 'Seleziona una data';
+    function renderCalendar() { const year = state.month.getFullYear(); const month = state.month.getMonth(); document.querySelector('#month').textContent = new Intl.DateTimeFormat('it-IT', { month: 'long', year: 'numeric' }).format(state.month); const days = document.querySelector('#days'); days.innerHTML = ''; const first = new Date(year, month, 1); const offset = (first.getDay() + 6) % 7; const count = new Date(year, month + 1, 0).getDate(); for (let i = 0; i < offset; i++) { const blank = document.createElement('span'); days.appendChild(blank); } for (let day = 1; day <= count; day++) { const date = new Date(year, month, day); const button = document.createElement('button'); button.type = 'button'; button.className = 'day'; button.textContent = day; const isPast = date < new Date(new Date().setHours(0, 0, 0, 0)); const isSunday = date.getDay() === 0; if (isPast || isSunday) button.disabled = true; if (state.date && date.toDateString() === state.date.toDateString()) button.classList.add('selected'); button.addEventListener('click', () => { state.date = date; updateSummary(); renderCalendar(); }); days.appendChild(button); } }
+    function updateSummary() { const offer = offers[state.offer]; document.querySelector('#summary-name').textContent = offer.name; document.querySelector('#summary-date').textContent = formatDate(state.date); document.querySelector('#summary-guests').textContent = `${state.guests} ${state.guests === 1 ? 'persona' : 'persone'}`; document.querySelector('#summary-meta').textContent = offer.meta; document.querySelector('#summary-price').textContent = offer.price; }
+    document.querySelector('#prev').addEventListener('click', () => { state.month.setMonth(state.month.getMonth() - 1); renderCalendar(); }); document.querySelector('#next').addEventListener('click', () => { state.month.setMonth(state.month.getMonth() + 1); renderCalendar(); }); document.querySelector('#minus').addEventListener('click', () => { state.guests = Math.max(1, state.guests - 1); document.querySelector('#guest-count').textContent = state.guests; updateSummary(); }); document.querySelector('#plus').addEventListener('click', () => { state.guests = Math.min(20, state.guests + 1); document.querySelector('#guest-count').textContent = state.guests; updateSummary(); }); document.querySelector('#submit').addEventListener('click', async () => { const name = document.querySelector('#name').value.trim(); const email = document.querySelector('#email').value.trim(); const submit = document.querySelector('#submit'); if (!state.date || !name || !email) { submit.textContent = 'Completa data, nome ed email'; return; } submit.disabled = true; submit.textContent = 'Invio in corso…'; try { const response = await fetch((window.location.protocol === 'file:' ? 'http://localhost:3000' : '') + '/api/booking', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ experience: ['classica', 'verticale', 'sumisura'][state.offer], date: `${state.date.getFullYear()}-${pad(state.date.getMonth() + 1)}-${pad(state.date.getDate())}`, guests: state.guests, name, email }) }); if (!response.ok) throw new Error('booking failed'); document.querySelector('#confirmation').classList.add('visible'); submit.textContent = 'Richiesta inviata'; } catch (error) { submit.disabled = false; submit.textContent = 'Invio non riuscito, riprova'; } }); renderCalendar(); updateSummary();
+  </script>
+</body>
+</html>

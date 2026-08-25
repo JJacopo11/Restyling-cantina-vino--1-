@@ -16,3 +16,18 @@ button, input { font: inherit; }
 ::selection { background: var(--red); color: var(--cream); }
 
 .mapboxgl-ctrl-attrib { font-size: 9px; }
+
+/* Shared design-system tokens reused across page section components (scoped styles don't cascade). */
+.eyebrow { margin: 0 0 18px; color: var(--gold); font-size: 12px; letter-spacing: .36em; text-transform: uppercase; font-weight: 500; }
+h1, h2, h3, h4 { font-family: 'Cormorant Garamond', serif; }
+h2 { margin: 0 0 28px; font-size: clamp(36px, 4.4vw, 58px); line-height: 1.02; font-weight: 600; }
+.button { display: inline-block; padding: 15px 30px; border: 0; border-radius: 2px; background: var(--red); color: #f7f1e4; text-decoration: none; font-size: 13px; letter-spacing: .16em; text-transform: uppercase; cursor: pointer; }
+.button-ghost { border: 1px solid rgba(230, 210, 154, .5); background: rgba(247, 241, 228, .1); }
+.content-section { max-width: 1280px; margin: auto; padding: 110px 40px; }
+.section-inner { max-width: 1280px; margin: auto; padding: 0 40px; }
+.center-head { margin-bottom: 58px; text-align: center; }
+.section-intro, .section-head.narrow { max-width: 780px; margin: 0 auto 48px; }
+@media (max-width: 640px) {
+  .content-section { padding: 68px 22px; }
+  .section-inner { padding: 0 22px; }
+}
